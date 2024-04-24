@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecipeResponse(
     @SerialName(value = "meals")
-    var meals: List<Receipe> = listOf()
+    var meals: List<Recipe> = listOf()
 )
