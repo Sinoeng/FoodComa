@@ -107,9 +107,27 @@ fun FoodComaApp(
     Scaffold(
         bottomBar = {
             FoodComaBottomBar(
-                navigateCategories = { navController.navigate(MovieDBScreen.Categories.name) },     //TODO fix correct popping of stack
-                navigateAreas = { navController.navigate(MovieDBScreen.Areas.name) },
-                navigateIngredients = { navController.navigate(MovieDBScreen.Ingredients.name) }
+                navigateCategories = {
+                    navController.navigate(MovieDBScreen.Categories.name) {
+                        popUpTo(MovieDBScreen.Categories.name) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateAreas = {
+                    navController.navigate(MovieDBScreen.Areas.name) {
+                        popUpTo(MovieDBScreen.Areas.name) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateIngredients = {
+                    navController.navigate(MovieDBScreen.Ingredients.name) {
+                        popUpTo(MovieDBScreen.Ingredients.name) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
