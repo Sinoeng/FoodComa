@@ -1,17 +1,17 @@
 package com.example.foodcoma.database
 
-import android.content.Context
 import com.example.foodcoma.network.FoodComaApiService
 import com.example.foodcoma.utils.Constants
-//import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-//import kotlinx.serialization.json.Json
-//import okhttp3.MediaType.Companion.toMediaType
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory;
 
 interface AppContainer {
     val categoryRepository: CategoryRepository
+    val areaRepository: AreaRepository
+    val ingredientRepository: IngredientRepository
     val recipeRepository: RecipeRepository
 }
 
@@ -23,9 +23,10 @@ class DefaultAppContainer() : AppContainer {
         return logging
     }
 
-//    private val foodComaJson = Json {
-//        ignoreUnknownKeys = true
-//    }
+
+    private val foodComaJson = Json {
+        ignoreUnknownKeys = true
+    }
 
 
     private val retrofit = Retrofit.Builder()
@@ -36,8 +37,7 @@ class DefaultAppContainer() : AppContainer {
                 .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
                 .build()
         )
-        .addConverterFactory(GsonConverterFactory.create())
-        //.addConverterFactory(foodComaJson.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(foodComaJson.asConverterFactory("application/json".toMediaType()))
         .baseUrl(Constants.SERVER_BASE_URL)
         .build()
 
@@ -47,6 +47,14 @@ class DefaultAppContainer() : AppContainer {
 
     override val categoryRepository: CategoryRepository by lazy {
         NetworkCategoryRepository(retrofitService)
+    }
+
+    override val areaRepository: AreaRepository by lazy {
+        NetworkAreaRepository(retrofitService)
+    }
+
+    override val ingredientRepository: IngredientRepository by lazy {
+        NetworkIngredientRepository(retrofitService)
     }
 
     override val recipeRepository: RecipeRepository by lazy {

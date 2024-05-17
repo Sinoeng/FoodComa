@@ -1,7 +1,9 @@
 package com.example.foodcoma.network
 
 
+import com.example.foodcoma.model.AreaResponse
 import com.example.foodcoma.model.CategoryResponse
+import com.example.foodcoma.model.IngredientResponse
 import com.example.foodcoma.model.RecipeResponse
 import com.example.foodcoma.model.RecipeShortResponse
 import com.example.foodcoma.utils.Constants
@@ -20,7 +22,7 @@ interface FoodComaApiService {
     suspend fun getRecipeById(
         @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("i")
+        @Query("i")
         id: String
     ): RecipeResponse
 
@@ -28,7 +30,7 @@ interface FoodComaApiService {
     suspend fun getRecipeBySearch(
         @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("s")
+        @Query("s")
         name: String
     ): RecipeShortResponse
 
@@ -36,7 +38,7 @@ interface FoodComaApiService {
     suspend fun getRecipeByIngredient(
         @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("i")
+        @Query("i")
         ingredient: String
     ): RecipeShortResponse
 
@@ -53,7 +55,7 @@ interface FoodComaApiService {
     suspend fun getRecipeByArea(
         @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("a")
+        @Query("a")
         area: String
     ): RecipeShortResponse
 
@@ -63,13 +65,11 @@ interface FoodComaApiService {
     suspend fun getAreas(
         @Path("api_key")
         apiKey: String = Constants.API_KEY
-    )
+    ): AreaResponse
 
     @GET("{api_key}/list.php?i=list")
     suspend fun getIngredients(
         @Path("api_key")
         apiKey: String = Constants.API_KEY
-    )
-
-
+    ): IngredientResponse
 }

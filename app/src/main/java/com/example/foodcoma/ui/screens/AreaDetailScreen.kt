@@ -1,36 +1,34 @@
 package com.example.foodcoma.ui.screens
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.viewmodel.FoodComaViewModel
+import com.example.foodcoma.viewmodel.SelectedAreaUiState
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
 
 
 @Composable
-fun CategoryDetailScreen(
+fun AreaDetailScreen(
     viewModel: FoodComaViewModel,
     onRecipeClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedCategoryUiState = viewModel.selectedCategoryUiState
-    when(selectedCategoryUiState) {
-        is SelectedCategoryUiState.Success -> {
-            viewModel.getRecipeListByCategory(selectedCategoryUiState.category)
+    val selectedAreaUiState = viewModel.selectedAreaUiState
+    when(selectedAreaUiState) {
+        is SelectedAreaUiState.Success -> {
+            viewModel.getRecipeListByArea(selectedAreaUiState.area)
             RecipeListScreen(
                 viewModel = viewModel,
                 onRecipeClick = onRecipeClick,
                 modifier = modifier
             )
         }
-        SelectedCategoryUiState.Loading -> {
-            Text("Loading category")
+        SelectedAreaUiState.Loading -> {
+            Text("Loading area")
         }
-        SelectedCategoryUiState.Error -> {
-            Text("Error loading category")
+        SelectedAreaUiState.Error -> {
+            Text("Error loading area")
         }
     }
 }

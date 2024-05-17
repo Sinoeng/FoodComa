@@ -53,10 +53,7 @@ fun RecipeListScreen(
                     Text("Error loading recipes")
                 }
             }
-
-            else -> {}
         }
-
     }
 }
 

@@ -64,7 +64,6 @@ fun CategoryItemCard(
         },
         modifier = modifier
             .padding(4.dp)
-            .padding(4.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

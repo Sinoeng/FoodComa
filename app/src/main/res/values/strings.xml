@@ -3,5 +3,10 @@
     <string name="favorites">Favorites</string>
     <string name="browse">Browse</string>
     <string name="categories">Categories</string>
+    <string name="areas">Areas</string>
     <string name="category_detail">Category_detail</string>
+    <string name="recipe_detail">Recipe_detail</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="area_detail">Area_detail</string>
+    <string name="ingredient_detail">Ingredient_detail</string>
 </resources>

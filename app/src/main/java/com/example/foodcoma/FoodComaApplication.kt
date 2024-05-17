@@ -11,6 +11,4 @@ class FoodComaApplication : Application() {
         super.onCreate()
         container = DefaultAppContainer()
     }
-
-
 }
