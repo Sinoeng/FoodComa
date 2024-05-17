@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun RecipeScreen(modifier: Modifier = Modifier) {
+fun RecipeDetailScreen(modifier: Modifier = Modifier) {
     Column {
         Text("recipe goes here")
     }

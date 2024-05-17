@@ -3,69 +3,71 @@ package com.example.foodcoma.network
 
 import com.example.foodcoma.model.CategoryResponse
 import com.example.foodcoma.model.RecipeResponse
+import com.example.foodcoma.model.RecipeShortResponse
 import com.example.foodcoma.utils.Constants
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FoodComaApiService {
-    @GET("categories")      // .php ?
+    @GET("{api_key}/categories.php")
     suspend fun getCategories(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY
     ): CategoryResponse
 
-    @GET("lookup.php?i={id}")
+    @GET("{api_key}/lookup.php")
     suspend fun getRecipeById(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("id")
+        @Path("i")
         id: String
     ): RecipeResponse
 
-    @GET("search.php?s={id}")
+    @GET("{api_key}/search.php")
     suspend fun getRecipeBySearch(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("id")
-        id: String
-    )
+        @Path("s")
+        name: String
+    ): RecipeShortResponse
 
-    @GET("filter.php?i={ingredient}")
+    @GET("{api_key}/filter.php?")
     suspend fun getRecipeByIngredient(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("ingredient")
+        @Path("i")
         ingredient: String
-    )
+    ): RecipeShortResponse
 
-    @GET("filter.php?c={category}")
+    //@GET("{api_key}/filter.php?c={category}")
+    @GET("{api_key}/filter.php")
     suspend fun getRecipeByCategory(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("category")
+        @Query("c")
         category: String
-    )
+    ): RecipeShortResponse
 
-    @GET("filter.php?c={area}")
+    @GET("{api_key}/filter.php")
     suspend fun getRecipeByArea(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY,
-        @Path("area")
+        @Path("a")
         area: String
-    )
+    ): RecipeShortResponse
 
     // TODO: list by first letter?
 
-    @GET("list.php?a=list")
+    @GET("{api_key}/list.php?a=list")
     suspend fun getAreas(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY
     )
 
-    @GET("list.php?i=list")
+    @GET("{api_key}/list.php?i=list")
     suspend fun getIngredients(
-        @Query("api_key")
+        @Path("api_key")
         apiKey: String = Constants.API_KEY
     )
 

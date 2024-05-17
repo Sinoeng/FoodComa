@@ -15,5 +15,5 @@ data class Category(
     var strCategoryThumb: String = "",
 
     @SerialName(value = "strCategoryDescription")
-    var strstrCategoryDescription: String = ""
+    var strCategoryDescription: String = ""
 )

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
 }
 
 android {
@@ -69,9 +70,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.retrofit)
+    //implementation(libs.retrofit)
     implementation(libs.coil.compose)
-    implementation(libs.kotlinx.serialization.json)
+    //implementation(libs.kotlinx.serialization.json)
+    //implementation(libs.com.squareup.retrofit2.converter.gson)
+    //implementation(libs.retrofit2.retrofit)
+    //implementation(libs.retrofit2.converter.gson)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.8.8")
+
+
 
     implementation(libs.logging.interceptor)
 }
