@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -16,6 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.foodcoma.model.Area
+import com.example.foodcoma.ui.theme.CardContainerColor
+import com.example.foodcoma.ui.theme.CardContentColor
+import com.example.foodcoma.ui.theme.CardDisabledContainerColor
+import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.viewmodel.AreaListUiState
 
 
@@ -61,6 +66,12 @@ fun AreaItemCard(
 ) {
     Card(
         onClick = { onAreaClick(area) },
+        colors = CardColors(
+            containerColor = CardContainerColor,
+            contentColor = CardContentColor,
+            disabledContainerColor = CardDisabledContainerColor,
+            disabledContentColor = CardDisabledContentColor
+        ),
         modifier = modifier
             .padding(4.dp)
             .height(64.dp)
