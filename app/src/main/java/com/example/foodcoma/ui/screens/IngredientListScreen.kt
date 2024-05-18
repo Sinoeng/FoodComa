@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +26,39 @@ import com.example.foodcoma.viewmodel.IngredientListUiState
 fun IngredientListScreen(
     ingredientListUiState: IngredientListUiState,
     onIngredientClick: (Ingredient) -> Unit,
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier) {
+    val rows = when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            2
+        }
+        WindowWidthSizeClass.Medium -> {
+            3
+        }
+        WindowWidthSizeClass.Expanded -> {
+            4
+        }
+        else -> {
+            2
+        }
+    }
+    IngredientScreen(
+        ingredientListUiState = ingredientListUiState,
+        onIngredientClick = onIngredientClick,
+        rows = rows,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun IngredientScreen(
+    ingredientListUiState: IngredientListUiState,
+    onIngredientClick: (Ingredient) -> Unit,
+    rows: Int,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(columns = GridCells.Fixed(rows), modifier = modifier) {
         when (ingredientListUiState) {
             is IngredientListUiState.Success -> {
                 items(ingredientListUiState.ingredients) { ingredient ->

@@ -80,7 +80,7 @@ dependencies {
     //implementation(libs.retrofit2.converter.gson)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-
+    implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
 
     implementation(libs.logging.interceptor)
 }

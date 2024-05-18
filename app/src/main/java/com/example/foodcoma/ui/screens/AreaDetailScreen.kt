@@ -1,6 +1,7 @@
 package com.example.foodcoma.ui.screens
 
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.foodcoma.viewmodel.FoodComaViewModel
@@ -12,6 +13,7 @@ import com.example.foodcoma.viewmodel.SelectedCategoryUiState
 fun AreaDetailScreen(
     viewModel: FoodComaViewModel,
     onRecipeClick: (String) -> Unit,
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
     val selectedAreaUiState = viewModel.selectedAreaUiState
@@ -21,6 +23,7 @@ fun AreaDetailScreen(
             RecipeListScreen(
                 viewModel = viewModel,
                 onRecipeClick = onRecipeClick,
+                windowSize = windowSize,
                 modifier = modifier
             )
         }

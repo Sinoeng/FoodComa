@@ -2,7 +2,6 @@ package com.example.foodcoma.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -11,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +24,39 @@ import com.example.foodcoma.viewmodel.CategoryListUiState
 fun CategoryListScreen(
     categoryUiState: CategoryListUiState,
     onCategoryClick: (Category) -> Unit,
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier) {
+    val rows = when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            2
+        }
+        WindowWidthSizeClass.Medium -> {
+            3
+        }
+        WindowWidthSizeClass.Expanded -> {
+            4
+        }
+        else -> {
+            2
+        }
+    }
+    CategoryScreen(
+        categoryUiState = categoryUiState,
+        onCategoryClick = onCategoryClick,
+        rows = rows,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun CategoryScreen(
+    categoryUiState: CategoryListUiState,
+    onCategoryClick: (Category) -> Unit,
+    rows: Int,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(columns = GridCells.Fixed(rows), modifier = modifier) {
         when(categoryUiState) {
             is CategoryListUiState.Success -> {
                 items(categoryUiState.categoryList) { category ->
@@ -36,7 +66,6 @@ fun CategoryListScreen(
                     )
                 }
             }
-
             CategoryListUiState.Loading -> {
                 item {
                     Text("Loading categories")
@@ -78,6 +107,5 @@ fun CategoryItemCard(
             }
             Text(category.strCategory)
         }
-
     }
 }
