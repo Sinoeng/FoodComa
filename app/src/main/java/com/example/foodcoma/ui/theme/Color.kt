@@ -13,3 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val BottomBarSelectedColor = Color(0xFFFF9800)
 val BottomBarUnselectedColor = Color.Gray
 val BottomBarDisabledColor = Color.LightGray
+
+val CardContentColor = Color.Black
+val CardContainerColor = Color(0x4AFF9F37)
+val CardDisabledContainerColor = Color.LightGray
+val CardDisabledContentColor = Color.LightGray
