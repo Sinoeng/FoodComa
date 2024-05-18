@@ -12,6 +12,7 @@ import com.example.foodcoma.FoodComaApplication
 import com.example.foodcoma.database.AreaRepository
 import com.example.foodcoma.database.CategoryRepository
 import com.example.foodcoma.database.IngredientRepository
+import com.example.foodcoma.database.LocalRecipeRepository
 import com.example.foodcoma.database.RecipeRepository
 import com.example.foodcoma.model.Area
 import com.example.foodcoma.model.Category
@@ -66,7 +67,7 @@ sealed interface RecipeListUiState {
 }
 
 sealed interface SelectedRecipeUiState {
-    data class Success(val recipe: Recipe) : SelectedRecipeUiState
+    data class Success(val recipe: Recipe, val isFavorite: Boolean) : SelectedRecipeUiState
     object Loading : SelectedRecipeUiState
     object Error : SelectedRecipeUiState
 }
@@ -82,7 +83,8 @@ class FoodComaViewModel(
     private val categoryRepository: CategoryRepository,
     private val areaRepository: AreaRepository,
     private val ingredientRepository: IngredientRepository,
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
+    private val localRepository: LocalRecipeRepository
 ): ViewModel() {
     var categoryListUiState: CategoryListUiState by mutableStateOf(CategoryListUiState.Loading)
         private set
@@ -197,7 +199,7 @@ class FoodComaViewModel(
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByCategory(category.strCategory).meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByCategory(category.strCategory)!!.meals)
             }catch (e: IOException) {
                 RecipeListUiState.Error
             }catch (e: HttpException) {
@@ -210,7 +212,7 @@ class FoodComaViewModel(
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByArea(area.strArea).meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByArea(area.strArea)!!.meals)
             } catch (e: IOException) {
                 RecipeListUiState.Error
             } catch (e: HttpException) {
@@ -223,7 +225,7 @@ class FoodComaViewModel(
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByIngredient(ingredient.strIngredient).meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByIngredient(ingredient.strIngredient)!!.meals)
             } catch (e: IOException) {
                 RecipeListUiState.Error
             } catch (e: HttpException) {
@@ -232,12 +234,33 @@ class FoodComaViewModel(
         }
     }
 
+
+    fun setFavoriteRecipe(recipeID: String) {
+        viewModelScope.launch {
+            val state = selectedRecipeUiState
+            if (state is SelectedRecipeUiState.Success) {
+                localRepository.insertFavoriteRecipe(recipeID)
+                selectedRecipeUiState = SelectedRecipeUiState.Success(state.recipe, true)
+            }
+        }
+    }
+
+    fun unsetFavoriteRecipe(recipeID: String) {
+        viewModelScope.launch {
+            val state = selectedRecipeUiState
+            if (state is SelectedRecipeUiState.Success) {
+                localRepository.removeFavoriteRecipe(recipeID)
+                selectedRecipeUiState = SelectedRecipeUiState.Success(state.recipe, false)
+            }
+        }
+    }
+
     fun setSelectedRecipe(recipeID: String) {
         viewModelScope.launch {
             selectedRecipeUiState = SelectedRecipeUiState.Loading
             selectedRecipeUiState = try {
-                val recipe = recipeRepository.getRecipeByID(recipeID).meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
-                SelectedRecipeUiState.Success(recipe)
+                val recipe = recipeRepository.getRecipeByID(recipeID)!!.meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
+                SelectedRecipeUiState.Success(recipe, localRepository.getRecipeByID(recipeID) != null)
             } catch (e: IOException) {
                 SelectedRecipeUiState.Error
             } catch (e: HttpException) {
@@ -254,11 +277,13 @@ class FoodComaViewModel(
                 val areaRepository = application.container.areaRepository
                 val ingredientRepository = application.container.ingredientRepository
                 val recipeRepository = application.container.recipeRepository
+                val localRepository = application.container.localRecipeRepository
                 FoodComaViewModel(
                     categoryRepository = categoryRepository,
                     areaRepository = areaRepository,
                     ingredientRepository = ingredientRepository,
-                    recipeRepository = recipeRepository
+                    recipeRepository = recipeRepository,
+                    localRepository = localRepository
                 )
             }
         }

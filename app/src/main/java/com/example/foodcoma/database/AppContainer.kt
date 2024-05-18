@@ -1,5 +1,6 @@
 package com.example.foodcoma.database
 
+import android.content.Context
 import com.example.foodcoma.network.FoodComaApiService
 import com.example.foodcoma.utils.Constants
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -13,9 +14,12 @@ interface AppContainer {
     val areaRepository: AreaRepository
     val ingredientRepository: IngredientRepository
     val recipeRepository: RecipeRepository
+    val localRecipeRepository: LocalRecipeRepository
 }
 
-class DefaultAppContainer() : AppContainer {
+class DefaultAppContainer(
+    private val context: Context
+) : AppContainer {
 
     private fun getLoggerInterceptor(): HttpLoggingInterceptor {
         val logging = HttpLoggingInterceptor()
@@ -59,6 +63,10 @@ class DefaultAppContainer() : AppContainer {
 
     override val recipeRepository: RecipeRepository by lazy {
         NetworkRecipeRepository(retrofitService)
+    }
+
+    override val localRecipeRepository: LocalRecipeRepository by lazy {
+        LocalRecipeRepository(RecipeDatabase.getDatabase(context).recipeDao())
     }
 
 }

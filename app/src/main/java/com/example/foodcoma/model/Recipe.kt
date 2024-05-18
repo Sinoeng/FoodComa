@@ -1,10 +1,19 @@
 package com.example.foodcoma.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Entity(tableName = "recipes", indices = [Index(value = ["idMeal"], unique = true)])
 data class Recipe(
+    @SerialName(value = "id")
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0L,
+
     @SerialName(value = "idMeal")
     var idMeal: String = "",
 

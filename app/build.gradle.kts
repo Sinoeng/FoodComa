@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     //id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
-
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
 android {
@@ -64,6 +64,16 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+
+    //implementation(libs.androidx.room.common)
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    implementation("androidx.core:core-ktx:1.13.0")
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    //implementation("androidx.work:work-runtime-ktx:${rootProject.extra["room_version"]}")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation(libs.androidx.room.ktx)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

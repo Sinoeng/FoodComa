@@ -447,7 +447,15 @@ fun FoodComaApp(
                 }
                 composable(route = MovieDBScreen.RecipeDetail.name) {
                     RecipeDetailScreen(
-                        viewModel = foodComaViewModel
+                        viewModel = foodComaViewModel,
+                        onFavoriteClick = {  favorite, recipe ->
+                            if (favorite) {
+                                foodComaViewModel.setFavoriteRecipe(recipe)
+                            } else {
+                                foodComaViewModel.unsetFavoriteRecipe(recipe)
+                            }
+                        },       // TODO: this function
+                        windowSize = windowSize
                     )
                 }
             }
