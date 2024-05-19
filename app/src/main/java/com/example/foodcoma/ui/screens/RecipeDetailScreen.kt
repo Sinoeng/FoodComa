@@ -1,14 +1,19 @@
 package com.example.foodcoma.ui.screens
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Text
@@ -32,7 +37,6 @@ import com.example.foodcoma.viewmodel.SelectedRecipeUiState
 @Composable
 fun RecipeDetailScreen(
     viewModel: FoodComaViewModel,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
     windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
@@ -41,8 +45,6 @@ fun RecipeDetailScreen(
         is SelectedRecipeUiState.Success -> {
             RecipeScreen(
                 recipe = selectedRecipeUiState.recipe,
-                selectedRecipeUiState = selectedRecipeUiState,
-                onFavoriteClick = onFavoriteClick,
                 windowSize = windowSize,
                 modifier = modifier
             )
@@ -60,8 +62,6 @@ fun RecipeDetailScreen(
 @Composable
 private fun RecipeScreen(
     recipe: Recipe,
-    selectedRecipeUiState: SelectedRecipeUiState.Success,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
     windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
@@ -70,24 +70,18 @@ private fun RecipeScreen(
         WindowWidthSizeClass.Compact -> {
             CompactScreen(
                 recipe = recipe,
-                selectedRecipeUiState = selectedRecipeUiState,
-                onFavoriteClick = onFavoriteClick,
                 modifier = modifier
             )
         }
         WindowWidthSizeClass.Medium -> {
-            CompactScreen(
+            MediumScreen(
                 recipe = recipe,
-                selectedRecipeUiState = selectedRecipeUiState,
-                onFavoriteClick = onFavoriteClick,
                 modifier = modifier
             )
         }
         WindowWidthSizeClass.Expanded -> {
             ExpandedScreen(
                 recipe = recipe,
-                selectedRecipeUiState = selectedRecipeUiState,
-                onFavoriteClick = onFavoriteClick,
                 modifier = modifier
             )
         }
@@ -99,19 +93,16 @@ private fun InstructionsColumn(
     recipe: Recipe,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        colors = CardColors(
-            containerColor = Color(0x9CFFFFFF),
-            contentColor = CardContentColor,
-            disabledContainerColor = CardDisabledContainerColor,
-            disabledContentColor = CardDisabledContentColor
-        ),
+    Column(
         modifier = modifier
+            .background(Color(0x9CFFFFFF))
     ) {
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = recipe.strInstructions.replace("\n", "\n\n"),
             lineHeight = 1.25.em,
-            modifier = modifier
+            color = CardContentColor,
+            modifier = Modifier
         )
 
     }
@@ -168,39 +159,30 @@ private fun IngredientList(
     )
 
     var odd = true
-    Card(
-        colors = CardColors(
-            containerColor = CardContainerColor,
-            contentColor = CardContentColor,
-            disabledContainerColor = CardDisabledContainerColor,
-            disabledContentColor = CardDisabledContentColor
-        ),
+    Column(
         modifier = modifier
     ) {
-        Column {
-            ingredients.forEachIndexed { index, ingredient ->
-                if (ingredient.isNullOrBlank()) {
-                    return@forEachIndexed
-                }
-                Row(
-                    modifier = Modifier
-                        .background(if (odd) OddIngredientColor else EvenIngredientColor)
-                ) {
-                    Text(
-                        text = ingredient,
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-                    Text(
-                        text = amounts[index].orEmpty(),
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-                }
-                odd = !odd
+        ingredients.forEachIndexed { index, ingredient ->
+            if (ingredient.isNullOrBlank()) {
+                return@forEachIndexed
             }
+            Row(
+                modifier = Modifier
+                    .background(if (odd) OddIngredientColor else EvenIngredientColor)
+            ) {
+                Text(
+                    text = ingredient,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+                Text(
+                    text = amounts[index].orEmpty(),
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            odd = !odd
         }
-
     }
 }
 
@@ -208,8 +190,6 @@ private fun IngredientList(
 @Composable
 private fun CompactScreen(
     recipe: Recipe,
-    selectedRecipeUiState: SelectedRecipeUiState.Success,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -229,21 +209,15 @@ private fun CompactScreen(
                     modifier = Modifier
                         .height(400.dp)
                 )
-                Column(
+                IngredientList(
+                    recipe = recipe,
                     modifier = Modifier
-                        //.background(Color(0x80ffffff))
-                ) {
-                    IngredientList(
-                        recipe = recipe,
-                        modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    InstructionsColumn(
-                        recipe = recipe,
-                        modifier = Modifier
-                    )
-                }
+                )
 
+                InstructionsColumn(
+                    recipe = recipe,
+                    modifier = Modifier
+                )
             }
         }
     }
@@ -253,19 +227,44 @@ private fun CompactScreen(
 @Composable
 private fun MediumScreen(
     recipe: Recipe,
-    selectedRecipeUiState: SelectedRecipeUiState.Success,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO?
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(ScrollState(0))
+    ) {
+        AsyncImage(
+            model = recipe.strMealThumb,
+            contentDescription = recipe.strMeal,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            IngredientList(
+                recipe = recipe,
+                modifier = Modifier
+                    .weight(2f)
+            )
+            Spacer(modifier = Modifier.weight(0.05f))
+            InstructionsColumn(
+                recipe = recipe,
+                modifier = Modifier
+                    .weight(2f)
+            )
+        }
+    }
 }
 
 
 @Composable
 private fun ExpandedScreen(
     recipe: Recipe,
-    selectedRecipeUiState: SelectedRecipeUiState.Success,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row {
