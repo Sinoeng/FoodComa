@@ -1,6 +1,7 @@
 package com.example.foodcoma.database
 
 import com.example.foodcoma.model.FavoriteRecipeEntity
+import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.model.RecipeResponse
 import com.example.foodcoma.model.RecipeShort
 import com.example.foodcoma.model.RecipeShortResponse
@@ -43,12 +44,20 @@ class NetworkRecipeRepository(private val apiService: FoodComaApiService) : Reci
 }
 
 class LocalRecipeRepository(private val recipeDao: RecipeDao) : RecipeRepository {
-    suspend fun insertFavoriteRecipe(recipeID: String) {
-        recipeDao.insertFavorite(FavoriteRecipeEntity(recipeId = recipeID))
+    suspend fun insertFavoriteRecipe(recipe: Recipe) {
+        recipeDao.insertFavorite(recipe)
     }
 
     suspend fun removeFavoriteRecipe(recipeID: String) {
-        recipeDao.deleteFavorite(FavoriteRecipeEntity(recipeId = recipeID))
+        recipeDao.removeFavorite(recipeID)
+    }
+
+    suspend fun getFavoriteRecipes(): List<RecipeShort> {
+        return recipeDao.getAllFavoriteRecipes()
+    }
+
+    suspend fun getFavoriteRecipeByID(recipeID: String): Recipe? {
+        return recipeDao.getFavoriteRecipeByID(recipeID)
     }
 
     override suspend fun getRecipeByID(id: String): RecipeResponse? {

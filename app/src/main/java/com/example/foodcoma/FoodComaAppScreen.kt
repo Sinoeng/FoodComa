@@ -124,6 +124,9 @@ fun FoodComaTopBar(
             actionIconContentColor = Color.Red,
             scrolledContainerColor = Color.Gray
         ),
+        actions = {
+            Text("actions?")
+        },
         modifier = modifier
     )
 }
@@ -413,7 +416,14 @@ fun FoodComaApp(
                     )
                 }
                 composable(route = MovieDBScreen.Favorites.name) {
-                    FavoritesScreen()
+                    FavoritesScreen(
+                        viewModel = foodComaViewModel,
+                        onRecipeClick = { recipeID ->
+                            foodComaViewModel.setSelectedRecipe(recipeID)
+                            navController.navigate(MovieDBScreen.RecipeDetail.name)
+                        },
+                        windowSize = windowSize
+                    )
                 }
                 composable(route = MovieDBScreen.CategoryDetail.name) {
                     CategoryDetailScreen(
@@ -452,9 +462,9 @@ fun FoodComaApp(
                             if (favorite) {
                                 foodComaViewModel.setFavoriteRecipe(recipe)
                             } else {
-                                foodComaViewModel.unsetFavoriteRecipe(recipe)
+                                foodComaViewModel.unsetFavoriteRecipe(recipe.idMeal)
                             }
-                        },       // TODO: this function
+                        },
                         windowSize = windowSize
                     )
                 }

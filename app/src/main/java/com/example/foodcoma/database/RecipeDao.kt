@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.foodcoma.model.FavoriteRecipeEntity
 import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.model.RecipeShort
@@ -15,9 +16,12 @@ interface RecipeDao {
     @Query("SELECT recipe_id FROM favorite_recipes")
     suspend fun getAllFavoriteIDs(): List<String>
 
-    @Query("SELECT * FROM recipes LEFT JOIN favorite_recipes ON recipes.idMeal = favorite_recipes.recipe_id")
-    //@Query("SELECT * FROM recipes WHERE idMeal IN (SELECT recipe_id FROM favorite_recipes)")      // use one of these
-    suspend fun getAllFavorites(): List<Recipe>
+    //@Query("SELECT idMeal, strMeal, strMealThumb FROM recipes LEFT JOIN favorite_recipes ON recipes.idMeal = favorite_recipes.recipe_id") // broken for some reason
+    @Query("SELECT idMeal, strMeal, strMealThumb FROM recipes WHERE idMeal IN (SELECT recipe_id FROM favorite_recipes)")
+    suspend fun getAllFavoriteRecipes(): List<RecipeShort>
+
+    @Query("SELECT * FROM recipes LEFT JOIN favorite_recipes ON recipes.idMeal = favorite_recipes.recipe_id WHERE favorite_recipes.recipe_id = :recipeID")
+    suspend fun getFavoriteRecipeByID(recipeID: String): Recipe?
 
     @Query("SELECT * FROM recipes WHERE idMeal = :recipeID")
     suspend fun getRecipeByID(recipeID: String): List<Recipe>
@@ -34,11 +38,20 @@ interface RecipeDao {
     @Query("SELECT idMeal, strMeal, strMealThumb FROM recipes WHERE :area = strArea")
     suspend fun getRecipeByArea(area: String): List<RecipeShort>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(favRecipe: FavoriteRecipeEntity)
+    @Transaction
+    suspend fun insertFavorite(recipe: Recipe) {
+        insertRecipe(recipe)
+        insertFavoriteRecipe(FavoriteRecipeEntity(recipeId = recipe.idMeal))
+    }
 
-    @Delete
-    suspend fun deleteFavorite(favRecipe: FavoriteRecipeEntity)            // TODO: check how th @delete works
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRecipe(recipe: Recipe)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavoriteRecipe(favRecipe: FavoriteRecipeEntity)
+
+    @Query("DELETE FROM favorite_recipes WHERE recipe_id = :recipeID")
+    suspend fun removeFavorite(recipeID: String)            // TODO: check how th @delete works
 
 
 }

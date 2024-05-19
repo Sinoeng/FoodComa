@@ -235,11 +235,11 @@ class FoodComaViewModel(
     }
 
 
-    fun setFavoriteRecipe(recipeID: String) {
+    fun setFavoriteRecipe(recipe: Recipe) {
         viewModelScope.launch {
             val state = selectedRecipeUiState
             if (state is SelectedRecipeUiState.Success) {
-                localRepository.insertFavoriteRecipe(recipeID)
+                localRepository.insertFavoriteRecipe(recipe)
                 selectedRecipeUiState = SelectedRecipeUiState.Success(state.recipe, true)
             }
         }
@@ -255,12 +255,25 @@ class FoodComaViewModel(
         }
     }
 
+    fun getFavoriteRecipes() {
+        viewModelScope.launch {
+            selectedRecipeUiState = SelectedRecipeUiState.Loading
+            recipeListUiState = try {
+                RecipeListUiState.Success(localRepository.getFavoriteRecipes())
+            } catch (e: IOException) {
+                RecipeListUiState.Error
+            } catch (e: HttpException) {
+                RecipeListUiState.Error
+            }
+        }
+    }
+
     fun setSelectedRecipe(recipeID: String) {
         viewModelScope.launch {
             selectedRecipeUiState = SelectedRecipeUiState.Loading
             selectedRecipeUiState = try {
                 val recipe = recipeRepository.getRecipeByID(recipeID)!!.meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
-                SelectedRecipeUiState.Success(recipe, localRepository.getRecipeByID(recipeID) != null)
+                SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
             } catch (e: IOException) {
                 SelectedRecipeUiState.Error
             } catch (e: HttpException) {

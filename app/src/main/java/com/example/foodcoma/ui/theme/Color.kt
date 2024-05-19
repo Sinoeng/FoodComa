@@ -18,3 +18,7 @@ val CardContentColor = Color.Black
 val CardContainerColor = Color(0x4AFF9F37)
 val CardDisabledContainerColor = Color.LightGray
 val CardDisabledContentColor = Color.LightGray
+
+val OddIngredientColor = Color(0xCBCA6900)
+val EvenIngredientColor = Color(0xCBFF9F37)
+
