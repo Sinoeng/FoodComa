@@ -6,24 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import coil.compose.AsyncImage
@@ -84,7 +76,7 @@ private fun RecipeScreen(
             )
         }
         WindowWidthSizeClass.Medium -> {
-            MediumScreen(
+            CompactScreen(
                 recipe = recipe,
                 selectedRecipeUiState = selectedRecipeUiState,
                 onFavoriteClick = onFavoriteClick,
@@ -100,41 +92,6 @@ private fun RecipeScreen(
             )
         }
     }
-}
-
-@Composable
-private fun FavoriteSwitch(
-    checked: Boolean,
-    onFavoriteClick: (Boolean, Recipe) -> Unit,
-    recipe: Recipe,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        colors = CardColors(
-            containerColor = Color(0xCBFFDD00),     // TODO: more colors
-            contentColor = CardContentColor,
-            disabledContainerColor = CardDisabledContainerColor,
-            disabledContentColor = CardDisabledContentColor
-        )
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .padding(horizontal = 4.dp)
-        ) {
-            Text(
-                text = "Favorite: "
-            )
-            Switch(
-                checked = checked,
-                onCheckedChange = {
-                    onFavoriteClick(it, recipe)
-                }
-            )
-
-        }
-    }
-
 }
 
 @Composable
@@ -276,13 +233,6 @@ private fun CompactScreen(
                     modifier = Modifier
                         //.background(Color(0x80ffffff))
                 ) {
-                    FavoriteSwitch(
-                        checked = selectedRecipeUiState.isFavorite,
-                        onFavoriteClick = onFavoriteClick,
-                        recipe = recipe,
-                        modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
                     IngredientList(
                         recipe = recipe,
                         modifier = Modifier
@@ -326,24 +276,17 @@ private fun ExpandedScreen(
                 modifier = Modifier
                     .fillMaxHeight()
             )
-            FavoriteSwitch(
-                checked = selectedRecipeUiState.isFavorite,
-                onFavoriteClick = onFavoriteClick,
-                recipe = recipe,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-            )
         }
         LazyColumn(
             modifier = modifier
                 .fillMaxHeight()
         ) {
             item {
-
                 IngredientList(
                     recipe = recipe,
                     modifier = Modifier
                 )
+                Spacer(modifier = Modifier.height(10.dp))
                 InstructionsColumn(
                     recipe = recipe,
                     modifier = Modifier

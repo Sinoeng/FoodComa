@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +13,8 @@ import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -21,11 +24,13 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,6 +44,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.decode.ImageSource
+import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.ui.screens.AreaDetailScreen
 import com.example.foodcoma.ui.screens.AreaListScreen
 import com.example.foodcoma.ui.screens.CategoryDetailScreen
@@ -47,9 +53,13 @@ import com.example.foodcoma.ui.screens.FavoritesScreen
 import com.example.foodcoma.ui.screens.IngredientDetailScreen
 import com.example.foodcoma.ui.screens.IngredientListScreen
 import com.example.foodcoma.ui.screens.RecipeDetailScreen
+import com.example.foodcoma.ui.screens.components.FavoriteSwitch
 import com.example.foodcoma.ui.theme.BottomBarDisabledColor
 import com.example.foodcoma.ui.theme.BottomBarSelectedColor
 import com.example.foodcoma.ui.theme.BottomBarUnselectedColor
+import com.example.foodcoma.ui.theme.CardContentColor
+import com.example.foodcoma.ui.theme.CardDisabledContainerColor
+import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
@@ -69,6 +79,7 @@ enum class MovieDBScreen(@StringRes val title: Int){
     RecipeDetail(title = R.string.recipe_detail)
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodComaTopBar(
@@ -76,6 +87,7 @@ fun FoodComaTopBar(
     viewModel: FoodComaViewModel,
     modifier: Modifier = Modifier
 ) {
+    var actions: @Composable RowScope.() -> Unit = {}
     val title = when (currentRoute) {
         MovieDBScreen.Categories.name -> stringResource(id = MovieDBScreen.Categories.title)
         MovieDBScreen.Areas.name -> stringResource(id = MovieDBScreen.Areas.title)
@@ -86,7 +98,7 @@ fun FoodComaTopBar(
             if (state is SelectedCategoryUiState.Success) {
                 state.category.strCategory
             } else {
-                "failed to load category"
+                ""
             }
         }
         MovieDBScreen.AreaDetail.name -> {
@@ -94,7 +106,7 @@ fun FoodComaTopBar(
             if (state is SelectedAreaUiState.Success) {
                 state.area.strArea
             } else {
-                "failed to load area"
+                ""
             }
         }
         MovieDBScreen.IngredientDetail.name -> {
@@ -102,15 +114,28 @@ fun FoodComaTopBar(
             if (state is SelectedIngredientUiState.Success) {
                 state.ingredient.strIngredient
             } else {
-                "failed to load ingredient"
+                ""
             }
         }
         MovieDBScreen.RecipeDetail.name -> {
             val state = viewModel.selectedRecipeUiState
             if (state is SelectedRecipeUiState.Success) {
+                actions = @Composable {
+                    FavoriteSwitch(
+                        checked = state.isFavorite,
+                        onFavoriteClick = { favorite, recipe ->
+                            if (favorite) {
+                                viewModel.setFavoriteRecipe(recipe)
+                            } else {
+                                viewModel.unsetFavoriteRecipe(recipe.idMeal)
+                            }
+                        },
+                        recipe = state.recipe
+                    )
+                }
                 state.recipe.strMeal
             } else {
-                "failed to load recipe"
+                ""
             }
         }
         else -> "Err"
@@ -121,12 +146,10 @@ fun FoodComaTopBar(
             containerColor = BottomBarSelectedColor,
             titleContentColor = Color.Black,
             navigationIconContentColor = Color.Blue,        // TODO: decide these colors
-            actionIconContentColor = Color.Red,
+            actionIconContentColor = Color.White,
             scrolledContainerColor = Color.Gray
         ),
-        actions = {
-            Text("actions?")
-        },
+        actions = actions,
         modifier = modifier
     )
 }
