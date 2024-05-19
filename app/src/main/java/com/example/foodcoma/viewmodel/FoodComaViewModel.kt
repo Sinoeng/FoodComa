@@ -72,12 +72,6 @@ sealed interface SelectedRecipeUiState {
     object Error : SelectedRecipeUiState
 }
 
-sealed interface SelectedRecipeIDUiState {
-    data class Success(val recipeID: String) : SelectedRecipeIDUiState
-    object Loading : SelectedRecipeIDUiState
-    object Error : SelectedRecipeIDUiState
-}
-
 
 class FoodComaViewModel(
     private val categoryRepository: CategoryRepository,
@@ -121,10 +115,12 @@ class FoodComaViewModel(
             categoryListUiState = CategoryListUiState.Loading
             categoryListUiState = try {
                 CategoryListUiState.Success(categoryRepository.getCategories().categories)
-            } catch (e: IOException) {
-                CategoryListUiState.Error
-            } catch (e: HttpException) {
-                CategoryListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    CategoryListUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -134,10 +130,12 @@ class FoodComaViewModel(
             areaListUiState = AreaListUiState.Loading
             areaListUiState = try {
                 AreaListUiState.Success(areaRepository.getAreas().areas)
-            } catch (e: IOException) {
-                AreaListUiState.Error
-            } catch (e: HttpException) {
-                AreaListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    AreaListUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -147,10 +145,12 @@ class FoodComaViewModel(
             ingredientListUiState = IngredientListUiState.Loading
             ingredientListUiState = try {
                 IngredientListUiState.Success(ingredientRepository.getIngredients().ingredients)
-            } catch (e: IOException) {
-                IngredientListUiState.Error
-            } catch (e: HttpException) {
-                IngredientListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    IngredientListUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -161,10 +161,12 @@ class FoodComaViewModel(
             selectedCategoryUiState = SelectedCategoryUiState.Loading
             selectedCategoryUiState = try {
                 SelectedCategoryUiState.Success(category)
-            } catch (e: IOException) {
-                SelectedCategoryUiState.Error
-            } catch (e: HttpException) {
-                SelectedCategoryUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    SelectedCategoryUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -174,10 +176,12 @@ class FoodComaViewModel(
             selectedAreaUiState = SelectedAreaUiState.Loading
             selectedAreaUiState = try {
                 SelectedAreaUiState.Success(area)
-            } catch (e: IOException) {
-                SelectedAreaUiState.Error
-            } catch (e: HttpException) {
-                SelectedAreaUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    SelectedAreaUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -187,10 +191,12 @@ class FoodComaViewModel(
             selectedIngredientUiState = SelectedIngredientUiState.Loading
             selectedIngredientUiState = try {
                 SelectedIngredientUiState.Success(ingredient)
-            } catch (e: IOException) {
-                SelectedIngredientUiState.Error
-            } catch (e: HttpException) {
-                SelectedIngredientUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    SelectedIngredientUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -200,10 +206,20 @@ class FoodComaViewModel(
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
                 RecipeListUiState.Success(recipeRepository.getRecipeByCategory(category.strCategory)!!.meals)
-            }catch (e: IOException) {
-                RecipeListUiState.Error
-            }catch (e: HttpException) {
-                RecipeListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    try {
+                        RecipeListUiState.Success(localRepository.getRecipeByCategory(category.strCategory).meals)
+                    } catch (e: Exception) {
+                        if (e is IOException || e is HttpException) {
+                            RecipeListUiState.Error
+                        } else {
+                            throw e
+                        }
+                    }
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -213,10 +229,20 @@ class FoodComaViewModel(
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
                 RecipeListUiState.Success(recipeRepository.getRecipeByArea(area.strArea)!!.meals)
-            } catch (e: IOException) {
-                RecipeListUiState.Error
-            } catch (e: HttpException) {
-                RecipeListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    try {
+                        RecipeListUiState.Success(localRepository.getRecipeByArea(area.strArea).meals)
+                    } catch (e: Exception) {
+                        if (e is IOException || e is HttpException) {
+                            RecipeListUiState.Error
+                        } else {
+                            throw e
+                        }
+                    }
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -226,10 +252,20 @@ class FoodComaViewModel(
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
                 RecipeListUiState.Success(recipeRepository.getRecipeByIngredient(ingredient.strIngredient)!!.meals)
-            } catch (e: IOException) {
-                RecipeListUiState.Error
-            } catch (e: HttpException) {
-                RecipeListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    try {
+                        RecipeListUiState.Success(localRepository.getRecipeByIngredient(ingredient.strIngredient).meals)
+                    } catch (e: Exception) {
+                        if (e is IOException || e is HttpException) {
+                            RecipeListUiState.Error
+                        } else {
+                            throw e
+                        }
+                    }
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -260,10 +296,12 @@ class FoodComaViewModel(
             selectedRecipeUiState = SelectedRecipeUiState.Loading
             recipeListUiState = try {
                 RecipeListUiState.Success(localRepository.getFavoriteRecipes())
-            } catch (e: IOException) {
-                RecipeListUiState.Error
-            } catch (e: HttpException) {
-                RecipeListUiState.Error
+            } catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    RecipeListUiState.Error
+                } else {
+                    throw e
+                }
             }
         }
     }
@@ -274,10 +312,21 @@ class FoodComaViewModel(
             selectedRecipeUiState = try {
                 val recipe = recipeRepository.getRecipeByID(recipeID)!!.meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
                 SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
-            } catch (e: IOException) {
-                SelectedRecipeUiState.Error
-            } catch (e: HttpException) {
-                SelectedRecipeUiState.Error
+            }catch (e: Exception) {
+                if (e is IOException || e is HttpException) {
+                    try {
+                        val recipe = localRepository.getRecipeByID(recipeID)!!.meals[0]
+                        SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
+                    } catch (e: Exception) {
+                        if (e is IOException || e is HttpException) {
+                            SelectedRecipeUiState.Error
+                        } else {
+                            throw e
+                        }
+                    }
+                } else {
+                    throw e
+                }
             }
         }
     }
