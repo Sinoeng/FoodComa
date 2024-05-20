@@ -351,13 +351,9 @@ class FoodComaViewModel(
                 val recipe = recipeRepository.getRecipeByID(recipeID).meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
                 recipeRepository.cancelScheduledReload()
                 SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
-//                    .also {
-//                        recipeRepository.cancelScheduledReload()
-//                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
                     try {
-                        recipeRepository.scheduleReload("FoodComaScreen.RecipeDetail.name", inpData = recipeID)
                         val recipe = localRepository.getRecipeByID(recipeID)!!.meals[0]
                         SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
                     } catch (e: Exception) {

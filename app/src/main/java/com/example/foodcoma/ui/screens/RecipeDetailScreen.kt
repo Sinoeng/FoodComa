@@ -44,6 +44,8 @@ import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.ui.theme.EvenIngredientColor
 import com.example.foodcoma.ui.theme.OddIngredientColor
 import com.example.foodcoma.ui.theme.OpaqueWhiteColor
+import com.example.foodcoma.utils.Constants
+import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedRecipeIDUiState
 import com.example.foodcoma.viewmodel.SelectedRecipeUiState
@@ -56,7 +58,7 @@ fun RecipeDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val selectedRecipeUiState = viewModel.selectedRecipeUiState
-    val state = rememberPullToRefreshState(50.dp)
+    val state = rememberPullToRefreshState(PULL_TO_REFRESH_THRESHOLD.dp)
     if (state.isRefreshing) {
         LaunchedEffect(true) {
             val recipeIDState = viewModel.selectedRecipeIDUiState

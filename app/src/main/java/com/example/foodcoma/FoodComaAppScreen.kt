@@ -3,9 +3,11 @@ package com.example.foodcoma
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -25,10 +27,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,10 +53,12 @@ import com.example.foodcoma.ui.screens.FavoritesScreen
 import com.example.foodcoma.ui.screens.IngredientDetailScreen
 import com.example.foodcoma.ui.screens.IngredientListScreen
 import com.example.foodcoma.ui.screens.RecipeDetailScreen
+import com.example.foodcoma.ui.screens.RecipeListScreen
 import com.example.foodcoma.ui.screens.components.FavoriteSwitch
 import com.example.foodcoma.ui.theme.BottomBarDisabledColor
 import com.example.foodcoma.ui.theme.BottomBarSelectedColor
 import com.example.foodcoma.ui.theme.BottomBarUnselectedColor
+import com.example.foodcoma.utils.Constants
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
@@ -297,6 +307,7 @@ fun FoodComaNavigationRail(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodComaApp(
     windowSize: WindowWidthSizeClass,
@@ -392,90 +403,113 @@ fun FoodComaApp(
             },
             bottomBar = navBar
         ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = FoodComaScreen.Categories.name,
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                composable(route = FoodComaScreen.Categories.name) {
-                    CategoryListScreen(
-                        categoryUiState = foodComaViewModel.categoryListUiState,
-                        onCategoryClick = { category ->
-                            foodComaViewModel.setSelectedCategory(category)
-                            navController.navigate(FoodComaScreen.CategoryDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.Areas.name) {
-                    AreaListScreen(
-                        areaListUiState = foodComaViewModel.areaListUiState,
-                        onAreaClick = { area ->
-                            foodComaViewModel.setSelectedArea(area)
-                            navController.navigate(FoodComaScreen.AreaDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.Ingredients.name) {
-                    IngredientListScreen(
-                        ingredientListUiState = foodComaViewModel.ingredientListUiState,
-                        onIngredientClick = { ingredient ->
-                            foodComaViewModel.setSelectedIngredient(ingredient)
-                            navController.navigate(FoodComaScreen.IngredientDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.Favorites.name) {
-                    FavoritesScreen(
-                        viewModel = foodComaViewModel,
-                        onRecipeClick = { recipeID ->
-                            foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(FoodComaScreen.RecipeDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.CategoryDetail.name) {
-                    CategoryDetailScreen(
-                        viewModel = foodComaViewModel,
-                        onRecipeClick = { recipeID ->
-                            foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(FoodComaScreen.RecipeDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.AreaDetail.name) {
-                    AreaDetailScreen(
-                        viewModel = foodComaViewModel,
-                        onRecipeClick = { recipeID ->
-                            foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(FoodComaScreen.RecipeDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.IngredientDetail.name) {
-                    IngredientDetailScreen(
-                        viewModel = foodComaViewModel,
-                        onRecipeClick = { recipeID ->
-                            foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(FoodComaScreen.RecipeDetail.name)
-                        },
-                        windowSize = windowSize
-                    )
-                }
-                composable(route = FoodComaScreen.RecipeDetail.name) {
-                    RecipeDetailScreen(
-                        viewModel = foodComaViewModel,
-                        windowSize = windowSize
-                    )
+            val state = rememberPullToRefreshState(Constants.PULL_TO_REFRESH_THRESHOLD.dp)
+            if (state.isRefreshing) {
+                LaunchedEffect(true) {
+                    foodComaViewModel.getStarter()
+                    state.endRefresh()
                 }
             }
+            Box(
+                modifier = modifier
+                    .nestedScroll(state.nestedScrollConnection)
+                    .fillMaxSize()
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = FoodComaScreen.Categories.name,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    composable(route = FoodComaScreen.Categories.name) {
+                        CategoryListScreen(
+                            categoryUiState = foodComaViewModel.categoryListUiState,
+                            onCategoryClick = { category ->
+                                foodComaViewModel.setSelectedCategory(category)
+                                navController.navigate(FoodComaScreen.CategoryDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.Areas.name) {
+                        AreaListScreen(
+                            areaListUiState = foodComaViewModel.areaListUiState,
+                            onAreaClick = { area ->
+                                foodComaViewModel.setSelectedArea(area)
+                                navController.navigate(FoodComaScreen.AreaDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.Ingredients.name) {
+                        IngredientListScreen(
+                            ingredientListUiState = foodComaViewModel.ingredientListUiState,
+                            onIngredientClick = { ingredient ->
+                                foodComaViewModel.setSelectedIngredient(ingredient)
+                                navController.navigate(FoodComaScreen.IngredientDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.Favorites.name) {
+                        FavoritesScreen(
+                            viewModel = foodComaViewModel,
+                            onRecipeClick = { recipeID ->
+                                foodComaViewModel.setSelectedRecipe(recipeID)
+                                navController.navigate(FoodComaScreen.RecipeDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.CategoryDetail.name) {
+                        CategoryDetailScreen(
+                            viewModel = foodComaViewModel,
+                            onRecipeClick = { recipeID ->
+                                foodComaViewModel.setSelectedRecipe(recipeID)
+                                navController.navigate(FoodComaScreen.RecipeDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.AreaDetail.name) {
+                        AreaDetailScreen(
+                            viewModel = foodComaViewModel,
+                            onRecipeClick = { recipeID ->
+                                foodComaViewModel.setSelectedRecipe(recipeID)
+                                navController.navigate(FoodComaScreen.RecipeDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.IngredientDetail.name) {
+                        IngredientDetailScreen(
+                            viewModel = foodComaViewModel,
+                            onRecipeClick = { recipeID ->
+                                foodComaViewModel.setSelectedRecipe(recipeID)
+                                navController.navigate(FoodComaScreen.RecipeDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.RecipeDetail.name) {
+                        RecipeDetailScreen(
+                            viewModel = foodComaViewModel,
+                            windowSize = windowSize
+                        )
+                    }
+                }
+                PullToRefreshContainer(
+                    state = state,
+                    indicator = {
+                        PullToRefreshDefaults.Indicator(state)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = 50.dp)
+                )
+            }
+
         }
     }
 
