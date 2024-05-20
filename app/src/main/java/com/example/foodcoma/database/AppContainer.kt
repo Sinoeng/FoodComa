@@ -13,7 +13,7 @@ interface AppContainer {
     val categoryRepository: CategoryRepository
     val areaRepository: AreaRepository
     val ingredientRepository: IngredientRepository
-    val recipeRepository: RecipeRepository
+    val recipeRepository: NetworkRecipeRepository
     val localRecipeRepository: LocalRecipeRepository
 }
 
@@ -37,8 +37,8 @@ class DefaultAppContainer(
         .client(
             okhttp3.OkHttpClient.Builder()
                 .addInterceptor(getLoggerInterceptor())
-                .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+                .connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
                 .build()
         )
         .addConverterFactory(foodComaJson.asConverterFactory("application/json".toMediaType()))
@@ -50,19 +50,19 @@ class DefaultAppContainer(
     }
 
     override val categoryRepository: CategoryRepository by lazy {
-        NetworkCategoryRepository(retrofitService)
+        NetworkCategoryRepository(retrofitService, context)
     }
 
     override val areaRepository: AreaRepository by lazy {
-        NetworkAreaRepository(retrofitService)
+        NetworkAreaRepository(retrofitService, context)
     }
 
     override val ingredientRepository: IngredientRepository by lazy {
-        NetworkIngredientRepository(retrofitService)
+        NetworkIngredientRepository(retrofitService, context)
     }
 
-    override val recipeRepository: RecipeRepository by lazy {
-        NetworkRecipeRepository(retrofitService)
+    override val recipeRepository: NetworkRecipeRepository by lazy {
+        NetworkRecipeRepository(retrofitService, context)
     }
 
     override val localRecipeRepository: LocalRecipeRepository by lazy {

@@ -9,10 +9,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.foodcoma.FoodComaApplication
+import com.example.foodcoma.FoodComaScreen
 import com.example.foodcoma.database.AreaRepository
 import com.example.foodcoma.database.CategoryRepository
 import com.example.foodcoma.database.IngredientRepository
 import com.example.foodcoma.database.LocalRecipeRepository
+import com.example.foodcoma.database.NetworkRecipeRepository
 import com.example.foodcoma.database.RecipeRepository
 import com.example.foodcoma.model.Area
 import com.example.foodcoma.model.Category
@@ -72,12 +74,16 @@ sealed interface SelectedRecipeUiState {
     object Error : SelectedRecipeUiState
 }
 
+sealed interface SelectedRecipeIDUiState {
+    data class Set(val recipeID: String) : SelectedRecipeIDUiState
+    object Unset : SelectedRecipeIDUiState
+}
 
 class FoodComaViewModel(
     private val categoryRepository: CategoryRepository,
     private val areaRepository: AreaRepository,
     private val ingredientRepository: IngredientRepository,
-    private val recipeRepository: RecipeRepository,
+    private val recipeRepository: NetworkRecipeRepository,
     private val localRepository: LocalRecipeRepository
 ): ViewModel() {
     var categoryListUiState: CategoryListUiState by mutableStateOf(CategoryListUiState.Loading)
@@ -104,7 +110,13 @@ class FoodComaViewModel(
     var selectedIngredientUiState: SelectedIngredientUiState by mutableStateOf(SelectedIngredientUiState.Loading)
         private set
 
+    var selectedRecipeIDUiState: SelectedRecipeIDUiState by mutableStateOf(SelectedRecipeIDUiState.Unset)
+
     init {
+        getStarter()
+    }
+
+    fun getStarter() {
         getCategories()
         getAreas()
         getIngredients()
@@ -115,8 +127,12 @@ class FoodComaViewModel(
             categoryListUiState = CategoryListUiState.Loading
             categoryListUiState = try {
                 CategoryListUiState.Success(categoryRepository.getCategories().categories)
+                    .also {
+                        categoryRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
+                    categoryRepository.scheduleReload()
                     CategoryListUiState.Error
                 } else {
                     throw e
@@ -130,8 +146,12 @@ class FoodComaViewModel(
             areaListUiState = AreaListUiState.Loading
             areaListUiState = try {
                 AreaListUiState.Success(areaRepository.getAreas().areas)
+                    .also {
+                        areaRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
+                    areaRepository.scheduleReload()
                     AreaListUiState.Error
                 } else {
                     throw e
@@ -145,8 +165,12 @@ class FoodComaViewModel(
             ingredientListUiState = IngredientListUiState.Loading
             ingredientListUiState = try {
                 IngredientListUiState.Success(ingredientRepository.getIngredients().ingredients)
+                    .also {
+                        ingredientRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
+                    ingredientRepository.scheduleReload()
                     IngredientListUiState.Error
                 } else {
                     throw e
@@ -201,15 +225,19 @@ class FoodComaViewModel(
         }
     }
 
-    fun getRecipeListByCategory(category: Category) {
+    fun getRecipeListByCategory(category: String) {
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByCategory(category.strCategory)!!.meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByCategory(category).meals)
+                    .also {
+                        recipeRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
                     try {
-                        RecipeListUiState.Success(localRepository.getRecipeByCategory(category.strCategory).meals)
+                        recipeRepository.scheduleReload(FoodComaScreen.CategoryDetail.name, inpData = category)
+                        RecipeListUiState.Success(localRepository.getRecipeByCategory(category).meals)
                     } catch (e: Exception) {
                         if (e is IOException || e is HttpException) {
                             RecipeListUiState.Error
@@ -224,15 +252,19 @@ class FoodComaViewModel(
         }
     }
 
-    fun getRecipeListByArea(area: Area) {
+    fun getRecipeListByArea(area: String) {
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByArea(area.strArea)!!.meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByArea(area).meals)
+                    .also {
+                        recipeRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
                     try {
-                        RecipeListUiState.Success(localRepository.getRecipeByArea(area.strArea).meals)
+                        recipeRepository.scheduleReload(FoodComaScreen.AreaDetail.name, inpData = area)
+                        RecipeListUiState.Success(localRepository.getRecipeByArea(area).meals)
                     } catch (e: Exception) {
                         if (e is IOException || e is HttpException) {
                             RecipeListUiState.Error
@@ -247,15 +279,19 @@ class FoodComaViewModel(
         }
     }
 
-    fun getRecipeListByIngredient(ingredient: Ingredient) {
+    fun getRecipeListByIngredient(ingredient: String) {
         viewModelScope.launch {
             recipeListUiState = RecipeListUiState.Loading
             recipeListUiState = try {
-                RecipeListUiState.Success(recipeRepository.getRecipeByIngredient(ingredient.strIngredient)!!.meals)
+                RecipeListUiState.Success(recipeRepository.getRecipeByIngredient(ingredient).meals)
+                    .also {
+                        recipeRepository.cancelScheduledReload()
+                    }
             } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
                     try {
-                        RecipeListUiState.Success(localRepository.getRecipeByIngredient(ingredient.strIngredient).meals)
+                        recipeRepository.scheduleReload(FoodComaScreen.IngredientDetail.name, inpData = ingredient)
+                        RecipeListUiState.Success(localRepository.getRecipeByIngredient(ingredient).meals)
                     } catch (e: Exception) {
                         if (e is IOException || e is HttpException) {
                             RecipeListUiState.Error
@@ -309,16 +345,23 @@ class FoodComaViewModel(
     fun setSelectedRecipe(recipeID: String) {
         viewModelScope.launch {
             selectedRecipeUiState = SelectedRecipeUiState.Loading
+            selectedRecipeIDUiState = SelectedRecipeIDUiState.Unset
             selectedRecipeUiState = try {
-                val recipe = recipeRepository.getRecipeByID(recipeID)!!.meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
+                selectedRecipeIDUiState = SelectedRecipeIDUiState.Set(recipeID)
+                val recipe = recipeRepository.getRecipeByID(recipeID).meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
+                recipeRepository.cancelScheduledReload()
                 SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
-            }catch (e: Exception) {
+//                    .also {
+//                        recipeRepository.cancelScheduledReload()
+//                    }
+            } catch (e: Exception) {
                 if (e is IOException || e is HttpException) {
                     try {
+                        recipeRepository.scheduleReload("FoodComaScreen.RecipeDetail.name", inpData = recipeID)
                         val recipe = localRepository.getRecipeByID(recipeID)!!.meals[0]
                         SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
                     } catch (e: Exception) {
-                        if (e is IOException || e is HttpException) {
+                        if (e is IOException || e is HttpException || e is NullPointerException) {
                             SelectedRecipeUiState.Error
                         } else {
                             throw e

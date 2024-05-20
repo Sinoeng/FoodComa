@@ -19,7 +19,7 @@ fun IngredientDetailScreen(
     val selectedIngredientUiState = viewModel.selectedIngredientUiState
     when(selectedIngredientUiState) {
         is SelectedIngredientUiState.Success -> {
-            viewModel.getRecipeListByIngredient(selectedIngredientUiState.ingredient)
+            viewModel.getRecipeListByIngredient(selectedIngredientUiState.ingredient.strIngredient)
             RecipeListScreen(
                 viewModel = viewModel,
                 onRecipeClick = onRecipeClick,

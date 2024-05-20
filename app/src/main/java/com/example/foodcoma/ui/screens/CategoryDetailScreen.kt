@@ -21,7 +21,7 @@ fun CategoryDetailScreen(
     val selectedCategoryUiState = viewModel.selectedCategoryUiState
     when(selectedCategoryUiState) {
         is SelectedCategoryUiState.Success -> {
-            viewModel.getRecipeListByCategory(selectedCategoryUiState.category)
+            viewModel.getRecipeListByCategory(selectedCategoryUiState.category.strCategory)
             RecipeListScreen(
                 viewModel = viewModel,
                 onRecipeClick = onRecipeClick,

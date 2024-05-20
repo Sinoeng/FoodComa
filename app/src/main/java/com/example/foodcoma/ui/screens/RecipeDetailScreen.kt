@@ -1,5 +1,6 @@
 package com.example.foodcoma.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
@@ -12,15 +13,26 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import coil.compose.AsyncImage
@@ -31,9 +43,12 @@ import com.example.foodcoma.ui.theme.CardDisabledContainerColor
 import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.ui.theme.EvenIngredientColor
 import com.example.foodcoma.ui.theme.OddIngredientColor
+import com.example.foodcoma.ui.theme.OpaqueWhiteColor
 import com.example.foodcoma.viewmodel.FoodComaViewModel
+import com.example.foodcoma.viewmodel.SelectedRecipeIDUiState
 import com.example.foodcoma.viewmodel.SelectedRecipeUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeDetailScreen(
     viewModel: FoodComaViewModel,
@@ -41,20 +56,56 @@ fun RecipeDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val selectedRecipeUiState = viewModel.selectedRecipeUiState
-    when (selectedRecipeUiState) {
-        is SelectedRecipeUiState.Success -> {
-            RecipeScreen(
-                recipe = selectedRecipeUiState.recipe,
-                windowSize = windowSize,
-                modifier = modifier
-            )
+    val state = rememberPullToRefreshState(50.dp)
+    if (state.isRefreshing) {
+        LaunchedEffect(true) {
+            val recipeIDState = viewModel.selectedRecipeIDUiState
+            if (recipeIDState is SelectedRecipeIDUiState.Set) {
+                viewModel.setSelectedRecipe(recipeIDState.recipeID)
+            }
+            state.endRefresh()
         }
-        SelectedRecipeUiState.Loading -> {
-            Text(text = "Loading recipe")
+    }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(state.nestedScrollConnection)
+    ) {
+        when (selectedRecipeUiState) {
+            is SelectedRecipeUiState.Success -> {
+                RecipeScreen(
+                    recipe = selectedRecipeUiState.recipe,
+                    windowSize = windowSize,
+                    modifier = Modifier
+                )
+            }
+            SelectedRecipeUiState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(text = "Loading recipe")
+                }
+            }
+            SelectedRecipeUiState.Error -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                        Text(text = "Error loading recipe")
+                }
+            }
         }
-        SelectedRecipeUiState.Error -> {
-            Text(text = "Error loading recipe")
-        }
+        PullToRefreshContainer(
+            modifier = Modifier
+                .align(Alignment.TopCenter),
+            state = state,
+            indicator = {
+                Indicator(state)
+            }
+        )
     }
 }
 
@@ -95,7 +146,7 @@ private fun InstructionsColumn(
 ) {
     Column(
         modifier = modifier
-            .background(Color(0x9CFFFFFF))
+            .background(OpaqueWhiteColor)
     ) {
         Spacer(modifier = Modifier.height(5.dp))
         Text(
@@ -104,7 +155,6 @@ private fun InstructionsColumn(
             color = CardContentColor,
             modifier = Modifier
         )
-
     }
 }
 
@@ -187,6 +237,7 @@ private fun IngredientList(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CompactScreen(
     recipe: Recipe,
@@ -201,6 +252,7 @@ private fun CompactScreen(
             modifier = Modifier
                 .fillMaxWidth()
         )
+
         LazyColumn(
             modifier = Modifier
         ) {

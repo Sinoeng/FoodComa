@@ -13,8 +13,6 @@ import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -24,18 +22,14 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -43,8 +37,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.decode.ImageSource
-import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.ui.screens.AreaDetailScreen
 import com.example.foodcoma.ui.screens.AreaListScreen
 import com.example.foodcoma.ui.screens.CategoryDetailScreen
@@ -57,18 +49,16 @@ import com.example.foodcoma.ui.screens.components.FavoriteSwitch
 import com.example.foodcoma.ui.theme.BottomBarDisabledColor
 import com.example.foodcoma.ui.theme.BottomBarSelectedColor
 import com.example.foodcoma.ui.theme.BottomBarUnselectedColor
-import com.example.foodcoma.ui.theme.CardContentColor
-import com.example.foodcoma.ui.theme.CardDisabledContainerColor
-import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
 import com.example.foodcoma.viewmodel.SelectedIngredientUiState
 import com.example.foodcoma.viewmodel.SelectedRecipeUiState
+import com.example.foodcoma.workers.ScheduledRefreshWorker
 
 const val TAG = "FoodComaAppScreen"
 
-enum class MovieDBScreen(@StringRes val title: Int){
+enum class FoodComaScreen(@StringRes val title: Int){
     Categories(title = R.string.categories),
     Areas(title = R.string.areas),
     Ingredients(title = R.string.ingredients),
@@ -82,18 +72,18 @@ enum class MovieDBScreen(@StringRes val title: Int){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoodComaTopBar(
+fun FoodComaTopBar(             //TODO: move the topbar, etc, to a separate file
     currentRoute: String?,
     viewModel: FoodComaViewModel,
     modifier: Modifier = Modifier
 ) {
     var actions: @Composable RowScope.() -> Unit = {}
     val title = when (currentRoute) {
-        MovieDBScreen.Categories.name -> stringResource(id = MovieDBScreen.Categories.title)
-        MovieDBScreen.Areas.name -> stringResource(id = MovieDBScreen.Areas.title)
-        MovieDBScreen.Ingredients.name -> stringResource(id = MovieDBScreen.Ingredients.title)
-        MovieDBScreen.Favorites.name -> stringResource(id = MovieDBScreen.Favorites.title)
-        MovieDBScreen.CategoryDetail.name -> {
+        FoodComaScreen.Categories.name -> stringResource(id = FoodComaScreen.Categories.title)
+        FoodComaScreen.Areas.name -> stringResource(id = FoodComaScreen.Areas.title)
+        FoodComaScreen.Ingredients.name -> stringResource(id = FoodComaScreen.Ingredients.title)
+        FoodComaScreen.Favorites.name -> stringResource(id = FoodComaScreen.Favorites.title)
+        FoodComaScreen.CategoryDetail.name -> {
             val state = viewModel.selectedCategoryUiState
             if (state is SelectedCategoryUiState.Success) {
                 state.category.strCategory
@@ -101,7 +91,7 @@ fun FoodComaTopBar(
                 ""
             }
         }
-        MovieDBScreen.AreaDetail.name -> {
+        FoodComaScreen.AreaDetail.name -> {
             val state = viewModel.selectedAreaUiState
             if (state is SelectedAreaUiState.Success) {
                 state.area.strArea
@@ -109,7 +99,7 @@ fun FoodComaTopBar(
                 ""
             }
         }
-        MovieDBScreen.IngredientDetail.name -> {
+        FoodComaScreen.IngredientDetail.name -> {
             val state = viewModel.selectedIngredientUiState
             if (state is SelectedIngredientUiState.Success) {
                 state.ingredient.strIngredient
@@ -117,7 +107,7 @@ fun FoodComaTopBar(
                 ""
             }
         }
-        MovieDBScreen.RecipeDetail.name -> {
+        FoodComaScreen.RecipeDetail.name -> {
             val state = viewModel.selectedRecipeUiState
             if (state is SelectedRecipeUiState.Success) {
                 actions = @Composable {
@@ -177,7 +167,7 @@ fun FoodComaBottomBar(
             selectedIndicatorColor = BottomBarSelectedColor
         )
         NavigationBarItem(
-            selected = currentRoute == MovieDBScreen.Categories.name,
+            selected = currentRoute == FoodComaScreen.Categories.name,
             onClick = navigateCategories,
             label = { Text(text = "Categories") },
             icon = {
@@ -190,7 +180,7 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
-            selected = currentRoute == MovieDBScreen.Areas.name,
+            selected = currentRoute == FoodComaScreen.Areas.name,
             onClick = navigateAreas,
             label = { Text(text = "Areas") },
             icon = {
@@ -203,7 +193,7 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
-            selected = currentRoute == MovieDBScreen.Ingredients.name,
+            selected = currentRoute == FoodComaScreen.Ingredients.name,
             onClick = navigateIngredients,
             label = { Text(text = "Ingredients") },
             icon = {
@@ -216,7 +206,7 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
-            selected = currentRoute == MovieDBScreen.Favorites.name,
+            selected = currentRoute == FoodComaScreen.Favorites.name,
             onClick = navigateFavorites,
             label = { Text(text = "Favorites") },
             icon = {
@@ -253,7 +243,7 @@ fun FoodComaNavigationRail(
         modifier = modifier
     ) {
         NavigationRailItem(
-            selected = currentRoute == MovieDBScreen.Categories.name,
+            selected = currentRoute == FoodComaScreen.Categories.name,
             onClick = navigateCategories,
             label = { Text(text = stringResource(R.string.categories)) },
             icon = {
@@ -266,7 +256,7 @@ fun FoodComaNavigationRail(
             colors = navigationRailItemColors
         )
         NavigationRailItem(
-            selected = currentRoute == MovieDBScreen.Areas.name,
+            selected = currentRoute == FoodComaScreen.Areas.name,
             onClick = navigateAreas,
             label = { Text(text = stringResource(R.string.areas)) },
             icon = {
@@ -279,7 +269,7 @@ fun FoodComaNavigationRail(
             colors = navigationRailItemColors
         )
         NavigationRailItem(
-            selected = currentRoute == MovieDBScreen.Ingredients.name,
+            selected = currentRoute == FoodComaScreen.Ingredients.name,
             onClick = navigateIngredients,
             label = { Text(text = stringResource(R.string.ingredients)) },
             icon = {
@@ -292,7 +282,7 @@ fun FoodComaNavigationRail(
             colors = navigationRailItemColors
         )
         NavigationRailItem(
-            selected = currentRoute == MovieDBScreen.Favorites.name,
+            selected = currentRoute == FoodComaScreen.Favorites.name,
             onClick = navigateFavorites,
             label = { Text(text = stringResource(R.string.favorites)) },
             icon = {
@@ -314,6 +304,7 @@ fun FoodComaApp(
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ){
     val foodComaViewModel: FoodComaViewModel = viewModel(factory = FoodComaViewModel.Factory)
+    ScheduledRefreshWorker.viewmodel = foodComaViewModel
 
     // decides navigation style
     val navRail: @Composable () -> Unit
@@ -323,29 +314,29 @@ fun FoodComaApp(
             FoodComaNavigationRail(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    navController.navigate(MovieDBScreen.Categories.name) {
-                        popUpTo(MovieDBScreen.Categories.name) {
+                    navController.navigate(FoodComaScreen.Categories.name) {
+                        popUpTo(FoodComaScreen.Categories.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateAreas = {
-                    navController.navigate(MovieDBScreen.Areas.name) {
-                        popUpTo(MovieDBScreen.Areas.name) {
+                    navController.navigate(FoodComaScreen.Areas.name) {
+                        popUpTo(FoodComaScreen.Areas.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateIngredients = {
-                    navController.navigate(MovieDBScreen.Ingredients.name) {
-                        popUpTo(MovieDBScreen.Ingredients.name) {
+                    navController.navigate(FoodComaScreen.Ingredients.name) {
+                        popUpTo(FoodComaScreen.Ingredients.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateFavorites = {
-                    navController.navigate(MovieDBScreen.Favorites.name) {
-                        popUpTo(MovieDBScreen.Favorites.name) {
+                    navController.navigate(FoodComaScreen.Favorites.name) {
+                        popUpTo(FoodComaScreen.Favorites.name) {
                             inclusive = true
                         }
                     }
@@ -359,29 +350,29 @@ fun FoodComaApp(
             FoodComaBottomBar(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    navController.navigate(MovieDBScreen.Categories.name) {
-                        popUpTo(MovieDBScreen.Categories.name) {
+                    navController.navigate(FoodComaScreen.Categories.name) {
+                        popUpTo(FoodComaScreen.Categories.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateAreas = {
-                    navController.navigate(MovieDBScreen.Areas.name) {
-                        popUpTo(MovieDBScreen.Areas.name) {
+                    navController.navigate(FoodComaScreen.Areas.name) {
+                        popUpTo(FoodComaScreen.Areas.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateIngredients = {
-                    navController.navigate(MovieDBScreen.Ingredients.name) {
-                        popUpTo(MovieDBScreen.Ingredients.name) {
+                    navController.navigate(FoodComaScreen.Ingredients.name) {
+                        popUpTo(FoodComaScreen.Ingredients.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateFavorites = {
-                    navController.navigate(MovieDBScreen.Favorites.name) {
-                        popUpTo(MovieDBScreen.Favorites.name) {
+                    navController.navigate(FoodComaScreen.Favorites.name) {
+                        popUpTo(FoodComaScreen.Favorites.name) {
                             inclusive = true
                         }
                     }
@@ -403,82 +394,82 @@ fun FoodComaApp(
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = MovieDBScreen.Categories.name,
+                startDestination = FoodComaScreen.Categories.name,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                composable(route = MovieDBScreen.Categories.name) {
+                composable(route = FoodComaScreen.Categories.name) {
                     CategoryListScreen(
                         categoryUiState = foodComaViewModel.categoryListUiState,
                         onCategoryClick = { category ->
                             foodComaViewModel.setSelectedCategory(category)
-                            navController.navigate(MovieDBScreen.CategoryDetail.name)
+                            navController.navigate(FoodComaScreen.CategoryDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.Areas.name) {
+                composable(route = FoodComaScreen.Areas.name) {
                     AreaListScreen(
                         areaListUiState = foodComaViewModel.areaListUiState,
                         onAreaClick = { area ->
                             foodComaViewModel.setSelectedArea(area)
-                            navController.navigate(MovieDBScreen.AreaDetail.name)
+                            navController.navigate(FoodComaScreen.AreaDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.Ingredients.name) {
+                composable(route = FoodComaScreen.Ingredients.name) {
                     IngredientListScreen(
                         ingredientListUiState = foodComaViewModel.ingredientListUiState,
                         onIngredientClick = { ingredient ->
                             foodComaViewModel.setSelectedIngredient(ingredient)
-                            navController.navigate(MovieDBScreen.IngredientDetail.name)
+                            navController.navigate(FoodComaScreen.IngredientDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.Favorites.name) {
+                composable(route = FoodComaScreen.Favorites.name) {
                     FavoritesScreen(
                         viewModel = foodComaViewModel,
                         onRecipeClick = { recipeID ->
                             foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(MovieDBScreen.RecipeDetail.name)
+                            navController.navigate(FoodComaScreen.RecipeDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.CategoryDetail.name) {
+                composable(route = FoodComaScreen.CategoryDetail.name) {
                     CategoryDetailScreen(
                         viewModel = foodComaViewModel,
                         onRecipeClick = { recipeID ->
                             foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(MovieDBScreen.RecipeDetail.name)
+                            navController.navigate(FoodComaScreen.RecipeDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.AreaDetail.name) {
+                composable(route = FoodComaScreen.AreaDetail.name) {
                     AreaDetailScreen(
                         viewModel = foodComaViewModel,
                         onRecipeClick = { recipeID ->
                             foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(MovieDBScreen.RecipeDetail.name)
+                            navController.navigate(FoodComaScreen.RecipeDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.IngredientDetail.name) {
+                composable(route = FoodComaScreen.IngredientDetail.name) {
                     IngredientDetailScreen(
                         viewModel = foodComaViewModel,
                         onRecipeClick = { recipeID ->
                             foodComaViewModel.setSelectedRecipe(recipeID)
-                            navController.navigate(MovieDBScreen.RecipeDetail.name)
+                            navController.navigate(FoodComaScreen.RecipeDetail.name)
                         },
                         windowSize = windowSize
                     )
                 }
-                composable(route = MovieDBScreen.RecipeDetail.name) {
+                composable(route = FoodComaScreen.RecipeDetail.name) {
                     RecipeDetailScreen(
                         viewModel = foodComaViewModel,
                         windowSize = windowSize

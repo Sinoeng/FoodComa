@@ -19,7 +19,7 @@ fun AreaDetailScreen(
     val selectedAreaUiState = viewModel.selectedAreaUiState
     when(selectedAreaUiState) {
         is SelectedAreaUiState.Success -> {
-            viewModel.getRecipeListByArea(selectedAreaUiState.area)
+            viewModel.getRecipeListByArea(selectedAreaUiState.area.strArea)
             RecipeListScreen(
                 viewModel = viewModel,
                 onRecipeClick = onRecipeClick,
