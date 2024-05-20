@@ -58,6 +58,7 @@ import com.example.foodcoma.ui.screens.components.FavoriteSwitch
 import com.example.foodcoma.ui.theme.BottomBarDisabledColor
 import com.example.foodcoma.ui.theme.BottomBarSelectedColor
 import com.example.foodcoma.ui.theme.BottomBarUnselectedColor
+import com.example.foodcoma.ui.theme.TopBarColor
 import com.example.foodcoma.utils.Constants
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
@@ -143,7 +144,7 @@ fun FoodComaTopBar(             //TODO: move the topbar, etc, to a separate file
     TopAppBar(
         title = { Text(title) },
         colors = TopAppBarColors(
-            containerColor = BottomBarSelectedColor,
+            containerColor = TopBarColor,
             titleContentColor = Color.Black,
             navigationIconContentColor = Color.Blue,        // TODO: decide these colors
             actionIconContentColor = Color.White,
@@ -509,9 +510,7 @@ fun FoodComaApp(
                         .offset(y = 50.dp)
                 )
             }
-
         }
     }
-
 }
 
