@@ -1,4 +1,4 @@
-package com.example.foodcoma.ui.screens.components
+package com.example.foodcoma.ui.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column

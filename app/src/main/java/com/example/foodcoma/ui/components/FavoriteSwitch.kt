@@ -1,4 +1,4 @@
-package com.example.foodcoma.ui.screens.components
+package com.example.foodcoma.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
