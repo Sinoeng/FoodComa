@@ -214,6 +214,21 @@ private fun IngredientList(
     Column(
         modifier = modifier
     ) {
+        Row(
+            modifier = Modifier.background(if (odd) OddIngredientColor else EvenIngredientColor)
+        ) {
+            Text(
+                text = "Ingredient",
+                modifier = Modifier
+                    .weight(1f)
+            )
+            Text(
+                text = "Amount",
+                modifier = Modifier
+                    .weight(1f)
+            )
+            odd = !odd
+        }
         ingredients.forEachIndexed { index, ingredient ->
             if (ingredient.isNullOrBlank()) {
                 return@forEachIndexed
