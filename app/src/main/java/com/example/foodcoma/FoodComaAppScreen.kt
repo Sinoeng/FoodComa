@@ -11,13 +11,17 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
@@ -34,6 +38,10 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -91,6 +99,32 @@ fun FoodComaTopBar(             //TODO: move the topbar, etc, to a separate file
     modifier: Modifier = Modifier
 ) {
     var actions: @Composable RowScope.() -> Unit = {}
+    actions = {
+        var menuExpanded by remember { mutableStateOf(false) }
+        IconButton(
+            onClick = {
+                menuExpanded = ! menuExpanded
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = "Clear database"
+            )
+        }
+        DropdownMenu(
+            expanded = menuExpanded,
+            onDismissRequest = {
+                menuExpanded = false
+            }) {
+            DropdownMenuItem(
+                text = { Text("Clear database") },
+                onClick = {
+                    viewModel.clearDatabase()
+                    menuExpanded = false
+                }
+            )
+        }
+    }
     val title = when (currentRoute) {
         FoodComaScreen.Category.name -> stringResource(id = FoodComaScreen.Category.title)
         FoodComaScreen.Area.name -> stringResource(id = FoodComaScreen.Area.title)

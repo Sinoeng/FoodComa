@@ -103,6 +103,10 @@ class LocalRecipeRepository(private val recipeDao: RecipeDao) : RecipeRepository
         return recipeDao.getFavoriteRecipeByID(recipeID)
     }
 
+    suspend fun clearDatabase() {
+        recipeDao.clearDatabase()
+    }
+
     override suspend fun getRecipeByID(id: String): RecipeResponse? {
         val recipeList = recipeDao.getRecipeByID(id)
         if (recipeList.isEmpty()) {

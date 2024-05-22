@@ -369,6 +369,12 @@ class FoodComaViewModel(
         }
     }
 
+    fun clearDatabase() {
+        viewModelScope.launch {
+            localRepository.clearDatabase()
+        }
+    }
+
     fun setSelectedRecipe(recipeID: String) {
         viewModelScope.launch {
             selectedRecipeUiState = SelectedRecipeUiState.Loading

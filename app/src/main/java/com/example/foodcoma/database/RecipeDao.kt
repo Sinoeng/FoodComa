@@ -53,5 +53,7 @@ interface RecipeDao {
     @Query("DELETE FROM favorite_recipes WHERE recipe_id = :recipeID")
     suspend fun removeFavorite(recipeID: String)            // TODO: check how th @delete works
 
+    @Query("DELETE FROM recipes WHERE recipes.idMeal NOT IN (SELECT recipe_id FROM favorite_recipes)")
+    suspend fun clearDatabase()
 
 }
