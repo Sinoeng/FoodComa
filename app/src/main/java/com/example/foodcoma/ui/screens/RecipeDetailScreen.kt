@@ -3,6 +3,7 @@ package com.example.foodcoma.ui.screens
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import coil.compose.AsyncImage
@@ -46,6 +49,7 @@ import com.example.foodcoma.ui.theme.OddIngredientColor
 import com.example.foodcoma.ui.theme.OpaqueWhiteColor
 import com.example.foodcoma.utils.Constants
 import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
+import com.example.foodcoma.utils.openYoutube
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedRecipeIDUiState
 import com.example.foodcoma.viewmodel.SelectedRecipeUiState
@@ -214,6 +218,21 @@ private fun IngredientList(
     Column(
         modifier = modifier
     ) {
+        Row(
+            modifier = Modifier.background(if (odd) OddIngredientColor else EvenIngredientColor)
+        ) {
+            Text(
+                text = "Ingredient",
+                modifier = Modifier
+                    .weight(1f)
+            )
+            Text(
+                text = "Amount",
+                modifier = Modifier
+                    .weight(1f)
+            )
+            odd = !odd
+        }
         ingredients.forEachIndexed { index, ingredient ->
             if (ingredient.isNullOrBlank()) {
                 return@forEachIndexed
@@ -245,6 +264,7 @@ private fun CompactScreen(
     recipe: Recipe,
     modifier: Modifier = Modifier
 ) {
+    val ctx = LocalContext.current
     Box(
         modifier = modifier
     ) {
@@ -268,6 +288,11 @@ private fun CompactScreen(
                     modifier = Modifier
                 )
 
+                val youtube = recipe.strYoutube
+                if(youtube != null) {
+                    YoutubeButton(url = youtube)
+                }
+
                 InstructionsColumn(
                     recipe = recipe,
                     modifier = Modifier
@@ -277,6 +302,21 @@ private fun CompactScreen(
     }
 }
 
+@Composable
+private fun YoutubeButton(url: String, modifier: Modifier = Modifier) {
+    val ctx = LocalContext.current
+    Box(
+        modifier = modifier
+            .background(OpaqueWhiteColor)
+            .fillMaxWidth()
+    ) {
+        Button(
+            onClick = { openYoutube(ctx, url) },
+        ) {
+            Text("View on YouTube")
+        }
+    }
+}
 
 @Composable
 private fun MediumScreen(
@@ -306,6 +346,13 @@ private fun MediumScreen(
                     .weight(2f)
             )
             Spacer(modifier = Modifier.weight(0.05f))
+
+            val youtube = recipe.strYoutube
+            if(youtube != null) {
+                YoutubeButton(url = youtube)
+            }
+
+            Spacer(modifier = Modifier.weight(0.05f))
             InstructionsColumn(
                 recipe = recipe,
                 modifier = Modifier
@@ -321,6 +368,7 @@ private fun ExpandedScreen(
     recipe: Recipe,
     modifier: Modifier = Modifier
 ) {
+    val ctx = LocalContext.current
     Row {
         Box {
             AsyncImage(
@@ -339,6 +387,13 @@ private fun ExpandedScreen(
                     recipe = recipe,
                     modifier = Modifier
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                val youtube = recipe.strYoutube
+                if(youtube != null) {
+                    YoutubeButton(url = youtube)
+                }
+
                 Spacer(modifier = Modifier.height(10.dp))
                 InstructionsColumn(
                     recipe = recipe,
