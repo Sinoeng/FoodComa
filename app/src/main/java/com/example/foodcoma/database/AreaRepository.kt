@@ -38,7 +38,7 @@ class NetworkAreaRepository(
             .build()
 
         val data = Data.Builder()
-            .putString(Constants.RELOAD_PAGE_TAG, FoodComaScreen.Areas.name)
+            .putString(Constants.RELOAD_PAGE_TAG, FoodComaScreen.Area.name)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<ScheduledRefreshWorker>()

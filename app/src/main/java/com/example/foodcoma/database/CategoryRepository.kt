@@ -37,7 +37,7 @@ class NetworkCategoryRepository(
             .build()
 
         val data = Data.Builder()
-            .putString(RELOAD_PAGE_TAG, FoodComaScreen.Categories.name)
+            .putString(RELOAD_PAGE_TAG, FoodComaScreen.Category.name)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<ScheduledRefreshWorker>()

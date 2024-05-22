@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.foodcoma.FoodComaScreen
-import com.example.foodcoma.utils.Constants.RELOAD_CATEGORY_TAG
 import com.example.foodcoma.utils.Constants.RELOAD_PAGE_TAG
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 
@@ -19,13 +18,13 @@ class ScheduledRefreshWorker(
         try {
             // TODO: do more than just the primary screens
             when (page) {
-                FoodComaScreen.Categories.name -> {
+                FoodComaScreen.Category.name -> {
                     viewmodel!!.getStarter()
                 }
-                FoodComaScreen.Areas.name -> {
+                FoodComaScreen.Area.name -> {
                     viewmodel!!.getStarter()
                 }
-                FoodComaScreen.Ingredients.name -> {
+                FoodComaScreen.Ingredient.name -> {
                     viewmodel!!.getStarter()
                 }
                 FoodComaScreen.CategoryDetail.name -> {

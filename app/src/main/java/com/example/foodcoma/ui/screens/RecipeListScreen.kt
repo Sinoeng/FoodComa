@@ -85,6 +85,11 @@ private fun RecipeScreen(
                         onRecipeClick = onRecipeClick,
                     )
                 }
+                if (recipeListUiState.recipeList.isEmpty()) {
+                    item {
+                        Text("No recipes found")
+                    }
+                }
             }
             RecipeListUiState.Loading -> {
                 item {

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,13 +54,13 @@ import com.example.foodcoma.ui.screens.FavoritesScreen
 import com.example.foodcoma.ui.screens.IngredientDetailScreen
 import com.example.foodcoma.ui.screens.IngredientListScreen
 import com.example.foodcoma.ui.screens.RecipeDetailScreen
-import com.example.foodcoma.ui.screens.RecipeListScreen
+import com.example.foodcoma.ui.screens.components.SearchScreen
 import com.example.foodcoma.ui.screens.components.FavoriteSwitch
 import com.example.foodcoma.ui.theme.BottomBarDisabledColor
 import com.example.foodcoma.ui.theme.BottomBarSelectedColor
 import com.example.foodcoma.ui.theme.BottomBarUnselectedColor
 import com.example.foodcoma.ui.theme.TopBarColor
-import com.example.foodcoma.utils.Constants
+import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
@@ -70,9 +71,10 @@ import com.example.foodcoma.workers.ScheduledRefreshWorker
 const val TAG = "FoodComaAppScreen"
 
 enum class FoodComaScreen(@StringRes val title: Int){
-    Categories(title = R.string.categories),
-    Areas(title = R.string.areas),
-    Ingredients(title = R.string.ingredients),
+    Category(title = R.string.category),
+    Area(title = R.string.area),
+    Ingredient(title = R.string.ingredient),
+    Search(title = R.string.search),
     Favorites(title = R.string.favorites),
     CategoryDetail(title = R.string.category_detail),
     AreaDetail(title = R.string.area_detail),
@@ -90,9 +92,10 @@ fun FoodComaTopBar(             //TODO: move the topbar, etc, to a separate file
 ) {
     var actions: @Composable RowScope.() -> Unit = {}
     val title = when (currentRoute) {
-        FoodComaScreen.Categories.name -> stringResource(id = FoodComaScreen.Categories.title)
-        FoodComaScreen.Areas.name -> stringResource(id = FoodComaScreen.Areas.title)
-        FoodComaScreen.Ingredients.name -> stringResource(id = FoodComaScreen.Ingredients.title)
+        FoodComaScreen.Category.name -> stringResource(id = FoodComaScreen.Category.title)
+        FoodComaScreen.Area.name -> stringResource(id = FoodComaScreen.Area.title)
+        FoodComaScreen.Ingredient.name -> stringResource(id = FoodComaScreen.Ingredient.title)
+        FoodComaScreen.Search.name -> stringResource(id = FoodComaScreen.Search.title)
         FoodComaScreen.Favorites.name -> stringResource(id = FoodComaScreen.Favorites.title)
         FoodComaScreen.CategoryDetail.name -> {
             val state = viewModel.selectedCategoryUiState
@@ -161,6 +164,7 @@ fun FoodComaBottomBar(
     navigateCategories: () -> Unit,
     navigateAreas: () -> Unit,
     navigateIngredients: () -> Unit,
+    navigateSearch: () -> Unit,
     navigateFavorites: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -178,9 +182,9 @@ fun FoodComaBottomBar(
             selectedIndicatorColor = BottomBarSelectedColor
         )
         NavigationBarItem(
-            selected = currentRoute == FoodComaScreen.Categories.name,
+            selected = currentRoute == FoodComaScreen.Category.name,
             onClick = navigateCategories,
-            label = { Text(text = "Categories") },
+            label = { Text(stringResource(R.string.category)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Home,
@@ -191,9 +195,9 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
-            selected = currentRoute == FoodComaScreen.Areas.name,
+            selected = currentRoute == FoodComaScreen.Area.name,
             onClick = navigateAreas,
-            label = { Text(text = "Areas") },
+            label = { Text(stringResource(R.string.area)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.LocationOn,
@@ -204,9 +208,9 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
-            selected = currentRoute == FoodComaScreen.Ingredients.name,
+            selected = currentRoute == FoodComaScreen.Ingredient.name,
             onClick = navigateIngredients,
-            label = { Text(text = "Ingredients") },
+            label = { Text(stringResource(R.string.ingredient)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Face,
@@ -217,9 +221,22 @@ fun FoodComaBottomBar(
             colors = navigationBarItemColors
         )
         NavigationBarItem(
+            selected = currentRoute == FoodComaScreen.Search.name,
+            onClick = navigateSearch,
+            label = { Text(stringResource(R.string.search)) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
+                )
+            },
+            colors = navigationBarItemColors
+        )
+        NavigationBarItem(
             selected = currentRoute == FoodComaScreen.Favorites.name,
             onClick = navigateFavorites,
-            label = { Text(text = "Favorites") },
+            label = { Text(stringResource(R.string.favorites)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Star,
@@ -254,9 +271,9 @@ fun FoodComaNavigationRail(
         modifier = modifier
     ) {
         NavigationRailItem(
-            selected = currentRoute == FoodComaScreen.Categories.name,
+            selected = currentRoute == FoodComaScreen.Category.name,
             onClick = navigateCategories,
-            label = { Text(text = stringResource(R.string.categories)) },
+            label = { Text(text = stringResource(R.string.category)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Home,
@@ -267,9 +284,9 @@ fun FoodComaNavigationRail(
             colors = navigationRailItemColors
         )
         NavigationRailItem(
-            selected = currentRoute == FoodComaScreen.Areas.name,
+            selected = currentRoute == FoodComaScreen.Area.name,
             onClick = navigateAreas,
-            label = { Text(text = stringResource(R.string.areas)) },
+            label = { Text(text = stringResource(R.string.area)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.LocationOn,
@@ -280,9 +297,9 @@ fun FoodComaNavigationRail(
             colors = navigationRailItemColors
         )
         NavigationRailItem(
-            selected = currentRoute == FoodComaScreen.Ingredients.name,
+            selected = currentRoute == FoodComaScreen.Ingredient.name,
             onClick = navigateIngredients,
-            label = { Text(text = stringResource(R.string.ingredients)) },
+            label = { Text(text = stringResource(R.string.ingredient)) },
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Face,
@@ -321,27 +338,36 @@ fun FoodComaApp(
     // decides navigation style
     val navRail: @Composable () -> Unit
     val navBar: @Composable () -> Unit
+    val navButton = @Composable {
+        SearchScreen(
+            viewModel = foodComaViewModel,
+            onRecipeClick = { recipeID ->
+                foodComaViewModel.setSelectedRecipe(recipeID)
+            },
+            windowSize = WindowWidthSizeClass.Compact
+        )
+    }
     if (windowSize == WindowWidthSizeClass.Expanded) {
         navRail = {
             FoodComaNavigationRail(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    navController.navigate(FoodComaScreen.Categories.name) {
-                        popUpTo(FoodComaScreen.Categories.name) {
+                    navController.navigate(FoodComaScreen.Category.name) {
+                        popUpTo(FoodComaScreen.Category.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateAreas = {
-                    navController.navigate(FoodComaScreen.Areas.name) {
-                        popUpTo(FoodComaScreen.Areas.name) {
+                    navController.navigate(FoodComaScreen.Area.name) {
+                        popUpTo(FoodComaScreen.Area.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateIngredients = {
-                    navController.navigate(FoodComaScreen.Ingredients.name) {
-                        popUpTo(FoodComaScreen.Ingredients.name) {
+                    navController.navigate(FoodComaScreen.Ingredient.name) {
+                        popUpTo(FoodComaScreen.Ingredient.name) {
                             inclusive = true
                         }
                     }
@@ -362,25 +388,32 @@ fun FoodComaApp(
             FoodComaBottomBar(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    navController.navigate(FoodComaScreen.Categories.name) {
-                        popUpTo(FoodComaScreen.Categories.name) {
+                    navController.navigate(FoodComaScreen.Category.name) {
+                        popUpTo(FoodComaScreen.Category.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateAreas = {
-                    navController.navigate(FoodComaScreen.Areas.name) {
-                        popUpTo(FoodComaScreen.Areas.name) {
+                    navController.navigate(FoodComaScreen.Area.name) {
+                        popUpTo(FoodComaScreen.Area.name) {
                             inclusive = true
                         }
                     }
                 },
                 navigateIngredients = {
-                    navController.navigate(FoodComaScreen.Ingredients.name) {
-                        popUpTo(FoodComaScreen.Ingredients.name) {
+                    navController.navigate(FoodComaScreen.Ingredient.name) {
+                        popUpTo(FoodComaScreen.Ingredient.name) {
                             inclusive = true
                         }
                     }
+                },
+                navigateSearch = {
+                     navController.navigate(FoodComaScreen.Search.name) {
+                         popUpTo(FoodComaScreen.Search.name) {
+                             inclusive = true
+                         }
+                     }
                 },
                 navigateFavorites = {
                     navController.navigate(FoodComaScreen.Favorites.name) {
@@ -399,12 +432,13 @@ fun FoodComaApp(
             topBar = {
                 FoodComaTopBar(
                     currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
-                    viewModel = foodComaViewModel
+                    viewModel = foodComaViewModel,
+                    modifier = Modifier
                 )
             },
             bottomBar = navBar
         ) { innerPadding ->
-            val state = rememberPullToRefreshState(Constants.PULL_TO_REFRESH_THRESHOLD.dp)
+            val state = rememberPullToRefreshState(PULL_TO_REFRESH_THRESHOLD.dp)
             if (state.isRefreshing) {
                 LaunchedEffect(true) {
                     foodComaViewModel.getStarter()
@@ -418,12 +452,12 @@ fun FoodComaApp(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = FoodComaScreen.Categories.name,
+                    startDestination = FoodComaScreen.Category.name,
                     modifier = modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                 ) {
-                    composable(route = FoodComaScreen.Categories.name) {
+                    composable(route = FoodComaScreen.Category.name) {
                         CategoryListScreen(
                             categoryUiState = foodComaViewModel.categoryListUiState,
                             onCategoryClick = { category ->
@@ -433,7 +467,7 @@ fun FoodComaApp(
                             windowSize = windowSize
                         )
                     }
-                    composable(route = FoodComaScreen.Areas.name) {
+                    composable(route = FoodComaScreen.Area.name) {
                         AreaListScreen(
                             areaListUiState = foodComaViewModel.areaListUiState,
                             onAreaClick = { area ->
@@ -443,12 +477,22 @@ fun FoodComaApp(
                             windowSize = windowSize
                         )
                     }
-                    composable(route = FoodComaScreen.Ingredients.name) {
+                    composable(route = FoodComaScreen.Ingredient.name) {
                         IngredientListScreen(
                             ingredientListUiState = foodComaViewModel.ingredientListUiState,
                             onIngredientClick = { ingredient ->
                                 foodComaViewModel.setSelectedIngredient(ingredient)
                                 navController.navigate(FoodComaScreen.IngredientDetail.name)
+                            },
+                            windowSize = windowSize
+                        )
+                    }
+                    composable(route = FoodComaScreen.Search.name) {
+                        SearchScreen(
+                            viewModel = foodComaViewModel,
+                            onRecipeClick = { recipeID ->
+                                foodComaViewModel.setSelectedRecipe(recipeID)
+                                navController.navigate(FoodComaScreen.RecipeDetail.name)
                             },
                             windowSize = windowSize
                         )

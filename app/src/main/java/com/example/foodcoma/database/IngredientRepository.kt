@@ -7,7 +7,6 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.foodcoma.FoodComaScreen
-import com.example.foodcoma.model.Ingredient
 import com.example.foodcoma.model.IngredientResponse
 import com.example.foodcoma.network.FoodComaApiService
 import com.example.foodcoma.utils.Constants
@@ -39,7 +38,7 @@ class NetworkIngredientRepository(
             .build()
 
         val data = Data.Builder()
-            .putString(Constants.RELOAD_PAGE_TAG, FoodComaScreen.Ingredients.name)
+            .putString(Constants.RELOAD_PAGE_TAG, FoodComaScreen.Ingredient.name)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<ScheduledRefreshWorker>()
