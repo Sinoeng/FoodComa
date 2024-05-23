@@ -29,13 +29,12 @@ import com.example.foodcoma.viewmodel.SelectedRecipeUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoodComaTopBar(             //TODO: move the topbar, etc, to a separate file
+fun FoodComaTopBar(
     currentRoute: String?,
     viewModel: FoodComaViewModel,
     modifier: Modifier = Modifier
 ) {
-    var actions: @Composable RowScope.() -> Unit = {}
-    actions = {
+    var actions: @Composable RowScope.() -> Unit = {
         var menuExpanded by remember { mutableStateOf(false) }
         IconButton(
             onClick = {

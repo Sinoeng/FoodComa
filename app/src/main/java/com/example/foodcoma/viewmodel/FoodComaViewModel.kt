@@ -1,6 +1,5 @@
 package com.example.foodcoma.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +15,6 @@ import com.example.foodcoma.database.CategoryRepository
 import com.example.foodcoma.database.IngredientRepository
 import com.example.foodcoma.database.LocalRecipeRepository
 import com.example.foodcoma.database.NetworkRecipeRepository
-import com.example.foodcoma.database.RecipeRepository
 import com.example.foodcoma.model.Area
 import com.example.foodcoma.model.Category
 import com.example.foodcoma.model.Ingredient
@@ -381,7 +379,7 @@ class FoodComaViewModel(
             selectedRecipeIDUiState = SelectedRecipeIDUiState.Unset
             selectedRecipeUiState = try {
                 selectedRecipeIDUiState = SelectedRecipeIDUiState.Set(recipeID)
-                val recipe = recipeRepository.getRecipeByID(recipeID).meals[0]      // TODO: perhaps an assert to make sure it isn't longer than 1
+                val recipe = recipeRepository.getRecipeByID(recipeID).meals[0]
                 recipeRepository.cancelScheduledReload()
                 SelectedRecipeUiState.Success(recipe, localRepository.getFavoriteRecipeByID(recipeID) != null)
             } catch (e: Exception) {

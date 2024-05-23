@@ -59,8 +59,6 @@ interface FoodComaApiService {
         area: String
     ): RecipeShortResponse
 
-    // TODO: list by first letter?
-
     @GET("{api_key}/list.php?a=list")
     suspend fun getAreas(
         @Path("api_key")

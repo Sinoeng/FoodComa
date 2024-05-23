@@ -1,6 +1,5 @@
 package com.example.foodcoma.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
@@ -37,9 +36,8 @@ fun FoodComaBottomBar(
     NavigationBar(
         modifier = modifier
     ) {
-        Log.d(com.example.foodcoma.TAG, "navController: $currentRoute")
         val navigationBarItemColors = NavigationBarItemColors(
-            selectedIconColor = Color.White,        // TODO: check how this looks with the icons
+            selectedIconColor = Color.White,
             selectedTextColor = BottomBarSelectedColor,
             unselectedIconColor = BottomBarUnselectedColor,
             unselectedTextColor = BottomBarUnselectedColor,

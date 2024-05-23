@@ -8,7 +8,6 @@ import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemColors
@@ -36,7 +35,7 @@ fun FoodComaNavigationRail(
     modifier: Modifier = Modifier
 ) {
     val navigationRailItemColors = NavigationRailItemColors(
-        selectedIconColor = Color.White,        // TODO: check how this looks with the icons
+        selectedIconColor = Color.White,
         selectedTextColor = BottomBarSelectedColor,
         unselectedIconColor = BottomBarUnselectedColor,
         unselectedTextColor = BottomBarUnselectedColor,

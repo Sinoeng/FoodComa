@@ -25,7 +25,7 @@ class NetworkCategoryRepository(
     private val apiService: FoodComaApiService,
     context: Context
 ) : CategoryRepository {
-    private val workManager = WorkManager.getInstance(context)      // TODO: check if this works as a singleton
+    private val workManager = WorkManager.getInstance(context)
 
     override suspend fun getCategories(): CategoryResponse {
         return apiService.getCategories()

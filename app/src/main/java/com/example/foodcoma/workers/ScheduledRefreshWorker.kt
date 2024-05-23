@@ -16,7 +16,6 @@ class ScheduledRefreshWorker(
         val page = inputData.getString(RELOAD_PAGE_TAG)
 
         try {
-            // TODO: do more than just the primary screens
             when (page) {
                 FoodComaScreen.Category.name -> {
                     viewmodel!!.getStarter()

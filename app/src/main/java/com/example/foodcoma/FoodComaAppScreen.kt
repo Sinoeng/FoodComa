@@ -42,8 +42,6 @@ import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.workers.ScheduledRefreshWorker
 
-const val TAG = "FoodComaAppScreen"
-
 enum class FoodComaScreen(@StringRes val title: Int){
     Category(title = R.string.category),
     Area(title = R.string.area),
