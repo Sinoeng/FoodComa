@@ -39,7 +39,6 @@ import com.example.foodcoma.ui.components.FoodComaBottomBar
 import com.example.foodcoma.ui.components.FoodComaNavigationRail
 import com.example.foodcoma.ui.components.FoodComaTopBar
 import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
-import com.example.foodcoma.utils.clearBackStack
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.workers.ScheduledRefreshWorker
 
@@ -76,24 +75,18 @@ fun FoodComaApp(
             FoodComaNavigationRail(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    clearBackStack(navController)
-                    (FoodComaScreen.Category.name)
                     navController.navigate(FoodComaScreen.Category.name)
                 },
                 navigateAreas = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Area.name)
                 },
                 navigateIngredients = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Ingredient.name)
                 },
                 navigateSearch = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Search.name)
                 },
                 navigateFavorites = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Favorites.name)
                 }
             )
@@ -105,23 +98,18 @@ fun FoodComaApp(
             FoodComaBottomBar(
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route,
                 navigateCategories = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Category.name)
                 },
                 navigateAreas = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Area.name)
                 },
                 navigateIngredients = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Ingredient.name)
                 },
                 navigateSearch = {
-                    clearBackStack(navController)
                      navController.navigate(FoodComaScreen.Search.name)
                 },
                 navigateFavorites = {
-                    clearBackStack(navController)
                     navController.navigate(FoodComaScreen.Favorites.name)
                 }
             )
