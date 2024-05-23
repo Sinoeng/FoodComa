@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.foodcoma"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -72,6 +72,11 @@ dependencies {
     //implementation("androidx.work:work-runtime-ktx:${rootProject.extra["room_version"]}")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation(libs.androidx.room.ktx)
+
+    //implementation("androidx.biometric:biometric:1.0.1")
+    implementation("androidx.biometric:biometric:1.2.0-alpha04")
+
+
 
 
     testImplementation(libs.junit)
