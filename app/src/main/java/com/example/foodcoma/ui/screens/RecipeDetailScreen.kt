@@ -256,7 +256,6 @@ private fun CompactScreen(
     recipe: Recipe,
     modifier: Modifier = Modifier
 ) {
-    val ctx = LocalContext.current
     Box(
         modifier = modifier
     ) {
@@ -360,7 +359,6 @@ private fun ExpandedScreen(
     recipe: Recipe,
     modifier: Modifier = Modifier
 ) {
-    val ctx = LocalContext.current
     Row {
         Box {
             AsyncImage(
