@@ -34,7 +34,7 @@ import com.example.foodcoma.ui.screens.FavoritesScreen
 import com.example.foodcoma.ui.screens.IngredientDetailScreen
 import com.example.foodcoma.ui.screens.IngredientListScreen
 import com.example.foodcoma.ui.screens.RecipeDetailScreen
-import com.example.foodcoma.ui.components.SearchScreen
+import com.example.foodcoma.ui.screens.SearchScreen
 import com.example.foodcoma.ui.components.FoodComaBottomBar
 import com.example.foodcoma.ui.components.FoodComaNavigationRail
 import com.example.foodcoma.ui.components.FoodComaTopBar
