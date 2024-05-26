@@ -1,6 +1,5 @@
 package com.example.foodcoma.utils
 
-import androidx.compose.ui.unit.dp
 
 object Constants {
     const val SERVER_BASE_URL = "https://www.themealdb.com/api/json/v1/"
