@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.example.foodcoma.utils.Constants
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedAreaUiState
-import com.example.foodcoma.viewmodel.SelectedCategoryUiState
 
 
 @OptIn(ExperimentalMaterial3Api::class)

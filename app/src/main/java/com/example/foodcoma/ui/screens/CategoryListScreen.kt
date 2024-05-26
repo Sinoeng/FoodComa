@@ -17,10 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.foodcoma.R
 import com.example.foodcoma.model.Category
 import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
@@ -77,12 +79,12 @@ private fun CategoryScreen(
             }
             CategoryListUiState.Loading -> {
                 item {
-                    Text("Loading categories")
+                    Text(stringResource(R.string.loading_string, stringResource(R.string.categories)))
                 }
             }
             CategoryListUiState.Error -> {
                 item {
-                    Text("Error loading categories")        // TODO: extract
+                    Text(stringResource(R.string.error_loading_string, stringResource(R.string.categories)))
                 }
             }
         }
@@ -119,7 +121,7 @@ fun CategoryItemCard(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(14f/9f)
+                        .aspectRatio(14f / 9f)
                 )
             }
             Text(

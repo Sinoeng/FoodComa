@@ -81,7 +81,7 @@ fun RecipeDetailScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Text(text = "Loading recipe")
+                    Text(text = stringResource(R.string.loading_string, stringResource(R.string.recipe)))
                 }
             }
             SelectedRecipeUiState.Error -> {
@@ -90,7 +90,7 @@ fun RecipeDetailScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                        Text(text = "Error loading recipe")
+                        Text(text = stringResource(R.string.error_loading_string, stringResource(R.string.recipe)))
                 }
             }
         }
@@ -304,7 +304,7 @@ private fun YoutubeButton(url: String, modifier: Modifier = Modifier) {
         Button(
             onClick = { openYoutube(ctx, url) },
         ) {
-            Text("View on YouTube")
+            Text(stringResource(R.string.view_on_youtube))
         }
     }
 }

@@ -17,14 +17,13 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.foodcoma.R
 import com.example.foodcoma.model.RecipeShort
 import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
@@ -87,18 +86,18 @@ private fun RecipeScreen(
                 }
                 if (recipeListUiState.recipeList.isEmpty()) {
                     item {
-                        Text("No recipes found")
+                        Text(stringResource(R.string.no_recipes_found))
                     }
                 }
             }
             RecipeListUiState.Loading -> {
                 item {
-                    Text("Loading recipes")
+                    Text(stringResource(R.string.loading_string, stringResource(R.string.recipes)))
                 }
             }
             RecipeListUiState.Error -> {
                 item {
-                    Text("Error loading recipes")
+                    Text(stringResource(R.string.error_loading_string, stringResource(R.string.recipes)))
                 }
             }
         }
@@ -137,7 +136,7 @@ fun RecipeItemCard(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(14f/9f)
+                        .aspectRatio(14f / 9f)
                 )
             }
             Box(
@@ -155,18 +154,3 @@ fun RecipeItemCard(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun RecipeItemCardPreview() {
-//    FoodComaTheme {
-//        val recipe = Recipe(
-//            strMeal = "Baked salmon with fennel & tomatoes",
-//            strMealThumb = "https://www.themealdb.com/images/media/meals/1548772327.jpg"
-//        )
-//        RecipeItemCard(
-//            recipe = recipe,
-//            onRecipeClick = {}
-//        )
-//    }
-//}

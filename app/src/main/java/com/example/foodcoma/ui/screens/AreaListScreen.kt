@@ -15,7 +15,9 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.foodcoma.R
 import com.example.foodcoma.model.Area
 import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
@@ -28,7 +30,6 @@ import com.example.foodcoma.viewmodel.AreaListUiState
 fun AreaListScreen(
     areaListUiState: AreaListUiState,
     onAreaClick: (Area) -> Unit,
-    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier) {
@@ -44,12 +45,12 @@ fun AreaListScreen(
 
             AreaListUiState.Loading -> {
                 item {
-                    Text("Loading areas")
+                    Text(stringResource(R.string.loading_string, stringResource(R.string.areas)))
                 }
             }
             AreaListUiState.Error -> {
                 item {
-                    Text("Error loading areas")        // TODO: extract
+                    Text(stringResource(R.string.error_loading_string, stringResource(R.string.areas)))
                 }
             }
         }

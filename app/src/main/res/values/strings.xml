@@ -11,6 +11,15 @@
     <string name="ingredient_detail">Ingredient_detail</string>
     <string name="search">Search</string>
     <string name="verify">Verify</string>
+    <string name="loading_string">Loading %1$s</string>
+    <string name="error_loading_string">Error loading %1$s</string>
+    <string name="recipe">recipe</string>
+    <string name="view_on_youtube">View on YouTube</string>
+    <string name="areas">areas</string>
+    <string name="recipes">recipes</string>
+    <string name="no_recipes_found">No recipes found</string>
+    <string name="ingredients">ingredients</string>
+    <string name="categories">categories</string>
     <string name="ingredient_head">Ingredient:</string>
     <string name="amount_head">Amount:</string>
 </resources>
