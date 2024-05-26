@@ -36,9 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import coil.compose.AsyncImage
+import com.example.foodcoma.R
 import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
@@ -222,14 +225,16 @@ private fun IngredientList(
             modifier = Modifier.background(if (odd) OddIngredientColor else EvenIngredientColor)
         ) {
             Text(
-                text = "Ingredient",
+                text = stringResource(R.string.ingredient_head),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "Amount",
+                text = stringResource(R.string.amount_head),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                fontWeight = FontWeight.SemiBold
             )
             odd = !odd
         }

@@ -11,4 +11,6 @@
     <string name="ingredient_detail">Ingredient_detail</string>
     <string name="search">Search</string>
     <string name="verify">Verify</string>
+    <string name="ingredient_head">Ingredient:</string>
+    <string name="amount_head">Amount:</string>
 </resources>
