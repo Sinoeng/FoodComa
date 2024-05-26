@@ -8,7 +8,6 @@ object Constants {
 
     const val SCHEDULED_RELOAD_TAG = "SCHEDULED_RELOAD_TAG"
     const val RELOAD_PAGE_TAG = "RELOAD_PAGE_TAG"
-    const val RELOAD_CATEGORY_TAG = "RELOAD_CATEGORY_TAG"
 
     const val PULL_TO_REFRESH_THRESHOLD = 100
 }
