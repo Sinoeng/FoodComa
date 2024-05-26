@@ -2,7 +2,6 @@ package com.example.foodcoma.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -14,12 +13,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.foodcoma.model.Recipe
+import com.example.foodcoma.R
 import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
 import com.example.foodcoma.viewmodel.FoodComaViewModel
 import com.example.foodcoma.viewmodel.SelectedCategoryUiState
-import com.example.foodcoma.viewmodel.SelectedRecipeIDUiState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,10 +62,10 @@ fun CategoryDetailScreen(
             }
         }
         SelectedCategoryUiState.Loading -> {
-            Text("Loading category")
+            Text(stringResource(R.string.loading_string, stringResource(R.string.category).toLowerCase()))
         }
         SelectedCategoryUiState.Error -> {
-            Text("Error loading category")
+            Text(stringResource(R.string.error_loading_string, stringResource(R.string.category).toLowerCase()))
         }
     }
 }

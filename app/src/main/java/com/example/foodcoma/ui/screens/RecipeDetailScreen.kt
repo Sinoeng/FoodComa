@@ -1,10 +1,7 @@
 package com.example.foodcoma.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +11,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -32,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,14 +34,10 @@ import androidx.compose.ui.unit.em
 import coil.compose.AsyncImage
 import com.example.foodcoma.R
 import com.example.foodcoma.model.Recipe
-import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
-import com.example.foodcoma.ui.theme.CardDisabledContainerColor
-import com.example.foodcoma.ui.theme.CardDisabledContentColor
 import com.example.foodcoma.ui.theme.EvenIngredientColor
 import com.example.foodcoma.ui.theme.OddIngredientColor
 import com.example.foodcoma.ui.theme.OpaqueWhiteColor
-import com.example.foodcoma.utils.Constants
 import com.example.foodcoma.utils.Constants.PULL_TO_REFRESH_THRESHOLD
 import com.example.foodcoma.utils.openYoutube
 import com.example.foodcoma.viewmodel.FoodComaViewModel
@@ -94,7 +81,7 @@ fun RecipeDetailScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Text(text = "Loading recipe")
+                    Text(text = stringResource(R.string.loading_string, stringResource(R.string.recipe)))
                 }
             }
             SelectedRecipeUiState.Error -> {
@@ -103,7 +90,7 @@ fun RecipeDetailScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                        Text(text = "Error loading recipe")
+                        Text(text = stringResource(R.string.error_loading_string, stringResource(R.string.recipe)))
                 }
             }
         }
@@ -318,7 +305,7 @@ private fun YoutubeButton(url: String, modifier: Modifier = Modifier) {
         Button(
             onClick = { openYoutube(ctx, url) },
         ) {
-            Text("View on YouTube")
+            Text(stringResource(R.string.view_on_youtube))
         }
     }
 }

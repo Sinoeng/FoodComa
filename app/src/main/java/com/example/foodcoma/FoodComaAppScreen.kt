@@ -189,8 +189,7 @@ private fun NavigationManager(
                 onAreaClick = { area ->
                     foodComaViewModel.setSelectedArea(area)
                     navController.navigate(FoodComaScreen.AreaDetail.name)
-                },
-                windowSize = windowSize
+                }
             )
         }
         composable(route = FoodComaScreen.Ingredient.name) {

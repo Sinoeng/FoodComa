@@ -6,16 +6,11 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.foodcoma.FoodComaScreen
-import com.example.foodcoma.model.Category
-import com.example.foodcoma.model.FavoriteRecipeEntity
 import com.example.foodcoma.model.Recipe
 import com.example.foodcoma.model.RecipeResponse
 import com.example.foodcoma.model.RecipeShort
 import com.example.foodcoma.model.RecipeShortResponse
 import com.example.foodcoma.network.FoodComaApiService
-import com.example.foodcoma.utils.Constants
-import com.example.foodcoma.utils.Constants.RELOAD_CATEGORY_TAG
 import com.example.foodcoma.utils.Constants.RELOAD_PAGE_TAG
 import com.example.foodcoma.utils.Constants.SCHEDULED_RELOAD_TAG
 import com.example.foodcoma.workers.ScheduledRefreshWorker

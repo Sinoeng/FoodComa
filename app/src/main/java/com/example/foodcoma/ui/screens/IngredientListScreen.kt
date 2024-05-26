@@ -2,14 +2,11 @@ package com.example.foodcoma.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +15,9 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.foodcoma.R
 import com.example.foodcoma.model.Ingredient
 import com.example.foodcoma.ui.theme.CardContainerColor
 import com.example.foodcoma.ui.theme.CardContentColor
@@ -75,12 +74,12 @@ private fun IngredientScreen(
             }
             IngredientListUiState.Loading -> {
                 item {
-                    Text(text = "Loading ingredients")
+                    Text(text = stringResource(R.string.loading_string, stringResource(R.string.ingredients)))
                 }
             }
             IngredientListUiState.Error -> {
                 item {
-                    Text(text = "Error loading ingredients")
+                    Text(text = stringResource(R.string.error_loading_string, stringResource(R.string.ingredients)))
                 }
             }
         }
@@ -102,7 +101,7 @@ private fun IngredientCard(
             disabledContainerColor = CardDisabledContainerColor,
             disabledContentColor = CardDisabledContentColor
         ),
-        modifier =  modifier
+        modifier = modifier
             .height(64.dp)
             .padding(4.dp)
     ) {
