@@ -19,12 +19,12 @@ import com.example.foodcoma.ui.theme.FoodComaTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val TAG = "MainActivity"
+private var access = MutableStateFlow(false)
 
 class MainActivity : FragmentActivity() {
 
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
-    private var access = MutableStateFlow(false)
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
